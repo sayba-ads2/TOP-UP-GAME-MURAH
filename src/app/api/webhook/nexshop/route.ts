@@ -48,7 +48,15 @@ export async function POST(request: Request) {
     reference_id: payload?.reference_id ?? null,
     signature_valid: valid,
     status_code: valid ? 200 : 401,
-    payload: payload ?? { raw: rawBody.slice(0, 2000) },
+    payload: {
+      body: payload ?? { raw: rawBody.slice(0, 2000) },
+      // Disimpan untuk menelusuri kegagalan verifikasi: kalau signature_valid
+      // false, bandingkan nilai ini dengan HMAC yang dihitung dari kandidat
+      // secret lain. Signature bukan rahasia — ia justru dikirim terbuka di
+      // header oleh NexShop.
+      received_signature: signature,
+      raw_body_length: rawBody.length,
+    },
   });
 
   if (!valid) {
