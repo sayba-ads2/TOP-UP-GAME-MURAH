@@ -1,0 +1,136 @@
+@import 'tailwindcss';
+
+/* ==========================================================================
+   TOP UP GAME MURAH — Design tokens
+   Palet mengikuti identitas Sayba Arc: dasar gelap arang + aksen oranye.
+   ========================================================================== */
+
+@theme {
+  --color-ink-950: #0a0a0b;
+  --color-ink-900: #101012;
+  --color-ink-850: #16161a;
+  --color-ink-800: #1c1c21;
+  --color-ink-700: #26262d;
+  --color-ink-600: #3a3a44;
+  --color-ink-500: #5c5c68;
+  --color-ink-400: #8b8b98;
+  --color-ink-300: #b8b8c2;
+  --color-ink-100: #ededf0;
+
+  --color-flame-50: #fff5ed;
+  --color-flame-100: #ffe8d4;
+  --color-flame-300: #fdb97a;
+  --color-flame-400: #fb9a48;
+  --color-flame-500: #f47c20;
+  --color-flame-600: #e2620f;
+  --color-flame-700: #bb4a0f;
+
+  --color-mint-400: #34d399;
+  --color-mint-500: #10b981;
+
+  --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system,
+    'Segoe UI', Roboto, sans-serif;
+
+  --radius-card: 1rem;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-ink-950);
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Latar bercahaya lembut di balik hero */
+.aurora {
+  background-image:
+    radial-gradient(60rem 30rem at 15% -10%, rgba(244, 124, 32, 0.16), transparent 60%),
+    radial-gradient(50rem 26rem at 90% 0%, rgba(244, 124, 32, 0.09), transparent 60%);
+}
+
+.card-surface {
+  background-color: var(--color-ink-900);
+  border: 1px solid var(--color-ink-800);
+  border-radius: var(--radius-card);
+}
+
+.card-surface-hover {
+  transition: border-color 160ms ease, transform 160ms ease, background-color 160ms ease;
+}
+.card-surface-hover:hover {
+  border-color: var(--color-flame-600);
+  transform: translateY(-2px);
+}
+
+/* Fokus keyboard yang selalu terlihat — penting untuk aksesibilitas */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-flame-500);
+  outline-offset: 2px;
+  border-radius: 0.5rem;
+}
+
+::selection {
+  background-color: var(--color-flame-500);
+  color: #fff;
+}
+
+/* Scrollbar tipis di desktop */
+@media (pointer: fine) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-ink-700) transparent;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Sembunyikan spinner pada input angka */
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
+  70%  { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
