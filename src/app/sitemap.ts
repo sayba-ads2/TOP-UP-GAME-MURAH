@@ -1,5 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getActiveGames } from '@/lib/queries';
+import { CATEGORIES } from '@/lib/categories';
 import { site } from '@/lib/site';
 
 export const revalidate = 3600;
@@ -15,8 +16,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: site.url, lastModified: now, changeFrequency: 'daily', priority: 1 },
-    { url: `${site.url}/voucher`, lastModified: now, changeFrequency: 'daily', priority: 0.95 },
-    { url: `${site.url}/games`, lastModified: now, changeFrequency: 'daily', priority: 0.9 },
+    ...CATEGORIES.map((category) => ({
+      url: `${site.url}/${category.slug}`,
+      lastModified: now,
+      changeFrequency: 'daily' as const,
+      priority: category.showOnHome ? 0.9 : 0.6,
+    })),
     { url: `${site.url}/cara-order`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${site.url}/cek-pesanan`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 },
     { url: `${site.url}/tentang-kami`, lastModified: now, changeFrequency: 'yearly', priority: 0.4 },

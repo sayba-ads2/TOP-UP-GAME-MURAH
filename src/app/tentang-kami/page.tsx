@@ -62,13 +62,12 @@ export default function TentangKamiPage() {
             </li>
           </ul>
 
-          <h2 className="pt-2 text-base font-bold text-fg">Kenapa Pontianak?</h2>
+          <h2 className="pt-2 text-base font-bold text-fg">Untuk siapa layanan ini</h2>
           <p>
-            Karena di sinilah kami tinggal. Kami tahu rasanya menunggu balasan penjual yang baru
-            aktif besok pagi, atau bingung mencari tempat top up yang benar-benar bisa dipercaya.
-            Meski layanan ini sepenuhnya online dan bisa dipakai dari seluruh Indonesia, pelanggan
-            di {site.serviceAreas.slice(0, 6).join(', ')} dan sekitarnya tetap jadi prioritas
-            dukungan kami.
+            Untuk siapa pun di Indonesia yang butuh isi pulsa tengah malam, kehabisan token
+            listrik saat toko sudah tutup, ingin menambah saldo e-wallet tanpa biaya admin
+            bank, atau sekadar membeli diamond sebelum event dalam game berakhir. Semua
+            prosesnya online sehingga tidak bergantung pada lokasi maupun jam buka konter.
           </p>
         </div>
 

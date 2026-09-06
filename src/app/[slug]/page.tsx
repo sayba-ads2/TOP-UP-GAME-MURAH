@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { ChevronRight, Clock3, ShieldCheck, Zap } from 'lucide-react';
 
 import { OrderForm } from '@/components/order-form';
-import { JsonLd, breadcrumbJsonLd, gameProductJsonLd } from '@/lib/jsonld';
+import { JsonLd, breadcrumbJsonLd, brandProductJsonLd } from '@/lib/jsonld';
 import {
   getActiveGames,
   getGameBySlug,
@@ -78,7 +78,7 @@ export default async function GamePage({ params }: Props) {
     <>
       <JsonLd
         data={[
-          gameProductJsonLd(game, products),
+          brandProductJsonLd(game, products),
           breadcrumbJsonLd([
             { name: 'Beranda', path: '/' },
             { name: 'Semua Game', path: '/games' },

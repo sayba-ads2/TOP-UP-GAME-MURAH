@@ -1,42 +1,49 @@
 @import 'tailwindcss';
 
 /* ==========================================================================
-   SAYBA VOUCHER — Design tokens
-   Tema terang, minimalis, profesional. Netral hangat sebagai dasar, oranye
-   Sayba dipakai hemat hanya untuk aksi utama dan aksen.
+   SAYBA — Design tokens
+   Tiga warna dasar: putih tulang (latar), abu hitam (header, footer, aksen
+   gelap), dan oranye Sayba (tombol utama, harga, border kartu unggulan).
    ========================================================================== */
 
 @theme {
-  /* --- Permukaan --------------------------------------------------------- */
-  --color-canvas: #f8f8f7;      /* latar halaman */
-  --color-surface: #ffffff;     /* kartu */
-  --color-surface-2: #f4f4f5;   /* blok redup di dalam kartu */
-  --color-surface-3: #ebebed;   /* pembeda paling kuat */
+  /* --- Putih tulang ------------------------------------------------------ */
+  --color-canvas: #f2efe8;      /* latar halaman */
+  --color-surface: #fbfaf6;     /* kartu */
+  --color-surface-2: #eceae2;   /* blok redup di dalam kartu */
+  --color-surface-3: #e1ded3;   /* pembeda paling kuat */
+
+  /* --- Abu hitam --------------------------------------------------------- */
+  --color-ink: #1a1a1c;         /* header & footer */
+  --color-ink-2: #26262a;       /* blok di dalam area gelap */
+  --color-ink-line: #34343a;    /* garis di area gelap */
+  --color-cream: #f4f1ea;       /* teks di atas abu hitam   13.9:1 */
+  --color-cream-muted: #a8a6a0; /* teks pendukung di gelap   5.6:1 */
 
   /* --- Garis ------------------------------------------------------------- */
-  --color-line: #e6e6e9;
-  --color-line-strong: #d3d3d8;
+  --color-line: #e0dcd1;
+  --color-line-strong: #cbc5b7;
 
-  /* --- Teks (semua lolos kontras WCAG AA di atas surface putih) ---------- */
-  --color-fg: #18181b;          /* judul            15.9:1 */
-  --color-fg-body: #3f3f46;     /* isi              10.4:1 */
-  --color-fg-muted: #62626b;    /* pendukung         6.4:1 */
-  --color-fg-faint: #8a8a93;    /* label kecil       3.6:1 — dekoratif saja */
+  /* --- Teks (kontras diukur di atas --color-surface) --------------------- */
+  --color-fg: #1a1a1c;          /* judul            15.2:1 */
+  --color-fg-body: #3d3d42;     /* isi               9.9:1 */
+  --color-fg-muted: #5f5f66;    /* pendukung         6.4:1 */
+  --color-fg-faint: #86858b;    /* label kecil       3.7:1 — dekoratif saja */
 
-  /* --- Merek ------------------------------------------------------------- */
-  --color-brand: #f97316;         /* aksen & ikon (dekoratif) */
-  --color-brand-strong: #c2410c;  /* tombol utama & teks  5.2:1 di atas putih */
+  /* --- Oranye ------------------------------------------------------------ */
+  --color-brand: #f7892e;         /* aksen & ikon (dekoratif) */
+  --color-brand-strong: #c2410c;  /* tombol & teks   5.2:1 di atas putih tulang */
   --color-brand-hover: #9a3412;
-  --color-brand-soft: #fff5ed;    /* latar sangat tipis */
-  --color-brand-border: #fdd0ab;
+  --color-brand-soft: #fbf1e6;
+  --color-brand-border: #edb887;  /* border kartu unggulan */
 
   /* --- Status ------------------------------------------------------------ */
   --color-success: #15803d;
-  --color-success-soft: #f0fdf4;
+  --color-success-soft: #eefaf1;
   --color-warning: #b45309;
-  --color-warning-soft: #fffbeb;
+  --color-warning-soft: #fdf6e7;
   --color-danger: #b91c1c;
-  --color-danger-soft: #fef2f2;
+  --color-danger-soft: #fdf0f0;
 
   --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', Roboto, sans-serif;
@@ -68,6 +75,11 @@ body {
   border-radius: var(--radius-card);
 }
 
+/* Kartu unggulan: border oranye untuk menarik mata tanpa menambah warna blok. */
+.card-accent {
+  border-color: var(--color-brand-border);
+}
+
 .card-surface-hover {
   transition:
     border-color 150ms ease,
@@ -75,16 +87,16 @@ body {
     transform 150ms ease;
 }
 .card-surface-hover:hover {
-  border-color: var(--color-line-strong);
-  box-shadow: 0 1px 2px rgb(24 24 27 / 0.04), 0 8px 24px -12px rgb(24 24 27 / 0.12);
-  transform: translateY(-1px);
+  border-color: var(--color-brand);
+  box-shadow: 0 1px 2px rgb(26 26 28 / 0.05), 0 10px 26px -14px rgb(26 26 28 / 0.22);
+  transform: translateY(-2px);
 }
 
 /* Latar hangat yang sangat tipis di balik hero */
 .aurora {
   background-image:
-    radial-gradient(48rem 24rem at 12% -20%, rgb(249 115 22 / 0.07), transparent 62%),
-    radial-gradient(40rem 20rem at 92% -10%, rgb(249 115 22 / 0.045), transparent 60%);
+    radial-gradient(46rem 22rem at 10% -18%, rgb(247 137 46 / 0.1), transparent 62%),
+    radial-gradient(38rem 18rem at 94% -8%, rgb(247 137 46 / 0.06), transparent 60%);
 }
 
 /* Fokus keyboard yang selalu terlihat — penting untuk aksesibilitas */
@@ -92,6 +104,11 @@ body {
   outline: 2px solid var(--color-brand-strong);
   outline-offset: 2px;
   border-radius: 0.5rem;
+}
+
+/* Di dalam area gelap, cincin fokus oranye tua kurang terbaca. */
+.on-ink :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline-color: var(--color-brand);
 }
 
 ::selection {

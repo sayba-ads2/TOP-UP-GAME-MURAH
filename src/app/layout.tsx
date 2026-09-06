@@ -5,7 +5,7 @@ import './globals.css';
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
 import { WhatsAppFloat } from '@/components/whatsapp-float';
-import { JsonLd, localBusinessJsonLd, organizationJsonLd, websiteJsonLd } from '@/lib/jsonld';
+import { JsonLd, onlineStoreJsonLd, organizationJsonLd, websiteJsonLd } from '@/lib/jsonld';
 import { getActiveGames, getStoreSettings } from '@/lib/queries';
 import { site } from '@/lib/site';
 
@@ -63,7 +63,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#ffffff',
+  themeColor: '#1a1a1c',
   width: 'device-width',
   initialScale: 1,
   colorScheme: 'light',
@@ -77,7 +77,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="id" className={jakarta.variable} suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <JsonLd data={[organizationJsonLd(), websiteJsonLd(), localBusinessJsonLd()]} />
+        <JsonLd data={[organizationJsonLd(), websiteJsonLd(), onlineStoreJsonLd()]} />
       </head>
       <body className="min-h-screen antialiased">
         <a

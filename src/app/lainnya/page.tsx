@@ -3,8 +3,8 @@ import { CategoryListing, categoryMetadata } from '@/components/category-listing
 
 export const revalidate = 300;
 
-export const metadata: Metadata = categoryMetadata('voucher');
+export const metadata: Metadata = categoryMetadata('lainnya');
 
-export default function VoucherPage() {
-  return <CategoryListing categoryKey="voucher" />;
+export default function LainnyaPage() {
+  return <CategoryListing categoryKey="lainnya" />;
 }

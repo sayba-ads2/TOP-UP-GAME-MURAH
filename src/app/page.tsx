@@ -4,11 +4,17 @@ import {
   ArrowRight,
   BadgeCheck,
   Clock3,
+  Gamepad2,
   Headphones,
-  MapPin,
+  Lightbulb,
+  Receipt,
   ShieldCheck,
+  Signal,
+  Smartphone,
   Ticket,
+  Tv,
   Wallet,
+  Wifi,
   Zap,
 } from 'lucide-react';
 
@@ -18,6 +24,7 @@ import { GameBrowser } from '@/components/game-browser';
 import { FaqAccordion } from '@/components/faq-accordion';
 import { TestimonialList } from '@/components/testimonial-list';
 import { JsonLd, faqJsonLd } from '@/lib/jsonld';
+import { homeCategories, type CategoryKey } from '@/lib/categories';
 import {
   getBanners,
   getCheapestPriceByGame,
@@ -33,26 +40,40 @@ import { formatNumber } from '@/lib/utils';
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: `${site.name} — Voucher Digital & Top Up Game Resmi`,
+  title: `${site.name} — Pulsa, Token Listrik, Voucher & Top Up Game`,
   description: site.description,
   alternates: { canonical: '/' },
+};
+
+/** Ikon per kategori untuk kotak pintasan di beranda. */
+const CATEGORY_ICON: Record<CategoryKey, typeof Signal> = {
+  pulsa: Signal,
+  data: Wifi,
+  pln: Lightbulb,
+  ewallet: Wallet,
+  game: Gamepad2,
+  voucher: Ticket,
+  tagihan: Receipt,
+  hiburan: Tv,
+  etoll: Smartphone,
+  lainnya: Smartphone,
 };
 
 const ADVANTAGES = [
   {
     icon: BadgeCheck,
-    title: 'Produk resmi, bukan reseller abal-abal',
-    body: 'Seluruh voucher dan top up diambil dari jalur distributor berlisensi. Kode yang kamu terima valid dan bisa ditukar langsung di platform aslinya.',
+    title: 'Produk resmi dari distributor berlisensi',
+    body: 'Pulsa, token listrik, voucher, dan top up game diambil dari jalur resmi. Nomor token dan kode voucher yang kamu terima valid dan bisa langsung dipakai.',
   },
   {
     icon: Zap,
     title: 'Otomatis dalam hitungan detik',
-    body: 'Begitu pembayaran terkonfirmasi, sistem langsung memproses. Tidak ada antre menunggu admin bangun atau balas chat.',
+    body: 'Begitu pembayaran terkonfirmasi, sistem langsung memproses. Tidak ada antre menunggu admin bangun atau membalas chat.',
   },
   {
     icon: ShieldCheck,
-    title: 'Tidak perlu akses akun',
-    body: 'Voucher dikirim sebagai kode. Top up game hanya butuh User ID. Kami tidak pernah meminta password, email, atau kode OTP.',
+    title: 'Tidak perlu akses akun kamu',
+    body: 'Kami cukup butuh nomor tujuan atau User ID. Password, PIN, dan kode OTP tidak pernah kami minta — siapa pun yang memintanya bukan kami.',
   },
   {
     icon: Wallet,
@@ -61,8 +82,8 @@ const ADVANTAGES = [
   },
   {
     icon: Clock3,
-    title: 'Buka 24 jam',
-    body: 'Sistem berjalan nonstop, termasuk akhir pekan dan tanggal merah. Butuh kode tengah malam pun tetap bisa.',
+    title: 'Buka 24 jam, di mana saja',
+    body: 'Sistem berjalan nonstop termasuk akhir pekan dan tanggal merah. Kehabisan token listrik tengah malam pun tetap bisa diatasi.',
   },
   {
     icon: Headphones,
@@ -72,22 +93,27 @@ const ADVANTAGES = [
 ];
 
 const STEPS = [
-  { title: 'Pilih produk', body: 'Cari voucher atau game yang kamu butuhkan lewat kolom pencarian atau daftar di bawah.' },
-  { title: 'Isi data', body: 'Voucher butuh email penerima; top up game butuh User ID dan Server ID.' },
-  { title: 'Bayar', body: 'Pilih metode pembayaran, lalu selesaikan sesuai nominal yang tertera.' },
-  { title: 'Terima otomatis', body: 'Kode atau item masuk sendiri. Lacak kapan saja lewat halaman Cek Pesanan.' },
+  { title: 'Pilih produk', body: 'Tentukan kategori, lalu pilih operator atau brand yang kamu butuhkan.' },
+  { title: 'Isi data tujuan', body: 'Nomor HP, nomor meter, User ID, atau email — sesuai jenis produknya.' },
+  { title: 'Bayar', body: 'Pilih metode pembayaran, lalu bayar sesuai nominal yang tertera.' },
+  { title: 'Terima otomatis', body: 'Pesanan diproses sendiri. Lacak kapan saja lewat halaman Cek Pesanan.' },
 ];
 
 export default async function HomePage() {
-  const [banners, vouchers, homeGames, cheapest, testimonials, faqs, stats] = await Promise.all([
-    getBanners(),
-    getGamesByKind('voucher'),
-    getGamesBySlugs(site.homeGameSlugs),
-    getCheapestPriceByGame(),
-    getTestimonials(6),
-    getFaqs(8),
-    getSuccessStats(),
-  ]);
+  const [banners, pulsa, vouchers, homeGames, cheapest, testimonials, faqs, stats] =
+    await Promise.all([
+      getBanners(),
+      getGamesByKind('pulsa', 12),
+      getGamesByKind('voucher', 12),
+      getGamesBySlugs(site.homeGameSlugs),
+      getCheapestPriceByGame(),
+      getTestimonials(6),
+      getFaqs(8),
+      getSuccessStats(),
+    ]);
+
+  const categories = homeCategories();
+  const searchable = [...pulsa, ...vouchers, ...homeGames];
 
   return (
     <>
@@ -97,33 +123,33 @@ export default async function HomePage() {
       <section className="aurora border-b border-line">
         <div className="mx-auto max-w-6xl px-4 py-12 md:py-16">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface px-3 py-1.5 text-xs font-medium text-fg-muted">
-              <MapPin className="h-3.5 w-3.5 text-brand" aria-hidden />
-              Pontianak, Kalimantan Barat · Melayani seluruh Indonesia
+            <span className="inline-flex items-center gap-2 rounded-full border border-brand-border bg-brand-soft px-3 py-1.5 text-xs font-medium text-brand-strong">
+              <Zap className="h-3.5 w-3.5" aria-hidden />
+              Otomatis 24 jam · Melayani seluruh Indonesia
             </span>
 
             <h1 className="mt-5 text-3xl font-bold leading-[1.15] tracking-tight text-fg md:text-[2.75rem]">
-              Voucher digital &amp; top up game,{' '}
-              <span className="text-brand-strong">harga jujur</span>
+              Pulsa, token listrik, voucher &amp; top up game{' '}
+              <span className="text-brand-strong">dalam satu tempat</span>
             </h1>
 
             <p className="mt-4 max-w-xl text-base leading-relaxed text-fg-muted">
-              Steam Wallet, Razer Gold, Google Play, PlayStation, Xbox, Garena Shell, sampai
-              diamond Mobile Legends dan Free Fire. Diproses otomatis 24 jam, tanpa perlu daftar
-              akun.
+              Isi pulsa dan paket data semua operator, beli token listrik PLN, tambah saldo
+              e-wallet, tebus voucher digital, sampai top up game favorit. Harga transparan,
+              proses otomatis, tanpa perlu daftar akun.
             </p>
 
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
-                href="#voucher"
+                href="#kategori"
                 className="inline-flex items-center gap-2 rounded-xl bg-brand-strong px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-hover"
               >
-                <Ticket className="h-4 w-4" aria-hidden />
-                Lihat Voucher
+                Mulai Belanja
+                <ArrowRight className="h-4 w-4" aria-hidden />
               </Link>
               <Link
                 href="/cek-pesanan"
-                className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-5 py-3 text-sm font-semibold text-fg transition-colors hover:border-line-strong"
+                className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-5 py-3 text-sm font-semibold text-fg transition-colors hover:border-brand"
               >
                 Lacak Pesanan
               </Link>
@@ -137,10 +163,8 @@ export default async function HomePage() {
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-fg-faint">Produk tersedia</dt>
-                <dd className="mt-1 text-lg font-bold text-fg">
-                  {vouchers.length + homeGames.length}+
-                </dd>
+                <dt className="text-xs text-fg-faint">Kategori produk</dt>
+                <dd className="mt-1 text-lg font-bold text-fg">{categories.length}</dd>
               </div>
               <div>
                 <dt className="text-xs text-fg-faint">Rata-rata proses</dt>
@@ -158,9 +182,61 @@ export default async function HomePage() {
         </div>
       )}
 
+      {/* ========================================================== KATEGORI */}
+      <section id="kategori" className="mx-auto max-w-6xl scroll-mt-24 px-4 pt-12">
+        <h2 className="text-lg font-bold tracking-tight text-fg sm:text-xl">Pilih Kategori</h2>
+        <p className="mb-5 mt-1 text-sm text-fg-muted">
+          Semua kebutuhan digital kamu, dikelompokkan supaya cepat ketemu.
+        </p>
+
+        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
+          {categories.map((category) => {
+            const Icon = CATEGORY_ICON[category.key];
+            return (
+              <li key={category.key}>
+                <Link
+                  href={`/${category.slug}`}
+                  className="card-surface card-surface-hover flex h-full flex-col items-center gap-2.5 px-3 py-5 text-center"
+                >
+                  <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-soft">
+                    <Icon className="h-5 w-5 text-brand-strong" aria-hidden />
+                  </span>
+                  <span className="text-xs font-semibold leading-snug text-fg">
+                    {category.short}
+                  </span>
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
+
+      {/* ============================================================== PULSA */}
+      {pulsa.length > 0 && (
+        <div className="mx-auto max-w-6xl px-4 pt-12">
+          <CardRail
+            title="Pulsa & Paket Data"
+            description="Semua operator, masuk otomatis dalam hitungan detik."
+            action={
+              <Link
+                href="/pulsa"
+                className="hidden items-center gap-1 text-sm font-semibold text-brand-strong hover:underline sm:inline-flex"
+              >
+                Lihat semua
+                <ArrowRight className="h-3.5 w-3.5" aria-hidden />
+              </Link>
+            }
+          >
+            {pulsa.map((brand) => (
+              <GameCard key={brand.id} game={brand} cheapest={cheapest[brand.id]} variant="rail" />
+            ))}
+          </CardRail>
+        </div>
+      )}
+
       {/* ============================================================ VOUCHER */}
-      <div id="voucher" className="mx-auto max-w-6xl scroll-mt-20 px-4 pt-12">
-        {vouchers.length > 0 ? (
+      {vouchers.length > 0 && (
+        <div className="mx-auto max-w-6xl px-4 pt-12">
           <CardRail
             title="Voucher Digital"
             description="Kode dikirim otomatis setelah pembayaran terkonfirmasi."
@@ -169,32 +245,24 @@ export default async function HomePage() {
                 href="/voucher"
                 className="hidden items-center gap-1 text-sm font-semibold text-brand-strong hover:underline sm:inline-flex"
               >
-                Semua voucher
+                Lihat semua
                 <ArrowRight className="h-3.5 w-3.5" aria-hidden />
               </Link>
             }
           >
-            {vouchers.map((game) => (
-              <GameCard key={game.id} game={game} cheapest={cheapest[game.id]} variant="rail" />
+            {vouchers.map((brand) => (
+              <GameCard key={brand.id} game={brand} cheapest={cheapest[brand.id]} variant="rail" />
             ))}
           </CardRail>
-        ) : (
-          <div className="card-surface px-6 py-10 text-center">
-            <Ticket className="mx-auto h-7 w-7 text-fg-faint" aria-hidden />
-            <p className="mt-3 text-sm font-semibold text-fg">Voucher belum diaktifkan</p>
-            <p className="mx-auto mt-1 max-w-md text-sm text-fg-muted">
-              Jalankan sinkronisasi katalog lalu aktifkan produk voucher di dashboard admin.
-            </p>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* =============================================================== GAME */}
       {homeGames.length > 0 && (
         <div className="mx-auto max-w-6xl px-4 pt-12">
           <CardRail
             title="Top Up Game"
-            description="Masukkan User ID, pilih nominal, diamond masuk otomatis."
+            description="Masukkan User ID, pilih nominal, item masuk otomatis."
             action={
               <Link
                 href="/games"
@@ -209,26 +277,16 @@ export default async function HomePage() {
               <GameCard key={game.id} game={game} cheapest={cheapest[game.id]} variant="rail" />
             ))}
           </CardRail>
-
-          <div className="mt-4 sm:hidden">
-            <Link
-              href="/games"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-brand-strong"
-            >
-              Lihat semua game
-              <ArrowRight className="h-3.5 w-3.5" aria-hidden />
-            </Link>
-          </div>
         </div>
       )}
 
-      {/* ============================================================ CARI ALL */}
+      {/* =========================================================== PENCARIAN */}
       <section className="mx-auto max-w-6xl px-4 py-12">
-        <h2 className="text-lg font-bold tracking-tight text-fg sm:text-xl">Cari Produk</h2>
+        <h2 className="text-lg font-bold tracking-tight text-fg sm:text-xl">Cari Cepat</h2>
         <p className="mb-6 mt-1 text-sm text-fg-muted">
-          Ketik nama voucher atau game untuk langsung membuka halaman pemesanannya.
+          Ketik nama operator, brand, atau game untuk langsung membuka halaman pemesanannya.
         </p>
-        <GameBrowser games={[...vouchers, ...homeGames]} cheapest={cheapest} />
+        <GameBrowser games={searchable} cheapest={cheapest} />
       </section>
 
       {/* =============================================================== ALASAN */}
@@ -291,34 +349,35 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ==================================================== KONTEN SEO LOKAL */}
+      {/* ================================================================= SEO */}
       <section className="border-t border-line bg-surface">
         <div className="mx-auto max-w-3xl px-4 py-14">
           <h2 className="text-base font-bold text-fg">
-            Toko voucher digital &amp; top up game di Pontianak
+            Satu tempat untuk semua kebutuhan digital
           </h2>
           <div className="mt-4 space-y-4 text-sm leading-relaxed text-fg-muted">
             <p>
-              {site.name} adalah toko voucher digital yang berbasis di Kota Pontianak, Kalimantan
-              Barat. Kami menjual kode voucher untuk platform besar — Steam Wallet, Razer Gold,
-              Google Play, PlayStation Network, Xbox, Garena Shell, sampai eFootball — dan
-              melayani top up langsung ke akun game untuk judul yang paling banyak dimainkan di
-              Indonesia.
+              {site.name} adalah layanan pembelian produk digital yang menyatukan kebutuhan
+              sehari-hari dalam satu halaman: isi pulsa dan paket data untuk semua operator,
+              token listrik PLN prabayar, saldo e-wallet, pembayaran tagihan, voucher digital,
+              hingga top up game. Tidak perlu berpindah-pindah aplikasi atau mencari konter
+              yang masih buka.
             </p>
             <p>
               Harga yang kamu lihat mengikuti harga distributor karena kami terdaftar sebagai
               mitra reseller resmi, bukan perantara yang menumpuk margin. Tidak ada biaya
-              tersembunyi: biaya metode pembayaran, kalau ada, ditulis terpisah sebelum kamu
+              tersembunyi — biaya metode pembayaran, kalau ada, ditulis terpisah sebelum kamu
               menekan tombol beli.
             </p>
             <p>
-              Meski berbasis di Pontianak, seluruh prosesnya online sehingga bisa diakses dari
-              mana saja: {site.serviceAreas.slice(0, 8).join(', ')}, sampai luar Kalimantan
-              Barat. Setiap transaksi punya kode invoice yang bisa kamu lacak sendiri di halaman{' '}
+              Seluruh prosesnya online dan berjalan otomatis 24 jam, sehingga bisa dipakai dari
+              mana saja di Indonesia, kapan saja. Setiap transaksi punya kode invoice yang bisa
+              kamu lacak sendiri di halaman{' '}
               <Link href="/cek-pesanan" className="font-medium text-brand-strong underline">
                 Cek Pesanan
               </Link>{' '}
-              tanpa perlu bertanya ke admin. Kalau pesanan gagal diproses, dana dikembalikan penuh.
+              tanpa perlu bertanya ke admin. Kalau pesanan gagal diproses, dana dikembalikan
+              penuh tanpa potongan.
             </p>
           </div>
         </div>
