@@ -4,6 +4,7 @@ import { DEFAULT_PRICING, type PricingConfig } from './pricing';
 import type {
   Faq,
   Game,
+  GameKind,
   OrderSettings,
   PaymentMethod,
   Product,
@@ -23,9 +24,9 @@ export async function getSetting<T>(key: string, fallback: T): Promise<T> {
 
 export async function getStoreSettings(): Promise<StoreSettings> {
   return getSetting<StoreSettings>('store', {
-    name: 'Top Up Game Murah',
-    tagline: 'Top Up Game Termurah & Tercepat di Pontianak',
-    url: 'https://topupgamemurah.sayba.id',
+    name: 'Sayba Voucher',
+    tagline: 'Voucher Digital & Top Up Game Resmi',
+    url: 'https://topup.sayba.id',
     whatsapp: '6281234567890',
     email: 'sayba.help@gmail.com',
     city: 'Pontianak',
@@ -68,6 +69,85 @@ export async function getFeaturedGames(limit = 8): Promise<Game[]> {
     .order('sort_order', { ascending: true })
     .limit(limit);
   return (data as Game[]) ?? [];
+}
+
+/**
+ * Etalase per bagian: 'voucher' (kode voucher digital) atau 'game' (top up
+ * in-game). Kalau migrasi 04 belum dijalankan, kolom `kind` belum ada — dalam
+ * hal itu semua entri dianggap 'game' agar halaman tetap tampil, bukan error.
+ */
+export async function getGamesByKind(kind: GameKind, limit = 60): Promise<Game[]> {
+  const { data, error } = await supabaseAdmin()
+    .from('games')
+    .select('*')
+    .eq('is_active', true)
+    .eq('kind', kind)
+    .order('sort_order', { ascending: true })
+    .order('name', { ascending: true })
+    .limit(limit);
+
+  if (!error) return (data as Game[]) ?? [];
+  return deriveGamesByKind(kind, limit);
+}
+
+/**
+ * Cadangan bila migrasi 04 belum dijalankan: bagian etalase diturunkan dari
+ * kategori produknya. Hasilnya sama, hanya sedikit lebih mahal — satu query
+ * tambahan — sehingga situs tetap benar sambil menunggu migrasi dipasang.
+ */
+async function deriveGamesByKind(kind: GameKind, limit: number): Promise<Game[]> {
+  const [{ data: productRows }, games] = await Promise.all([
+    supabaseAdmin()
+      .from('products')
+      .select('game_id, category')
+      .eq('is_active', true)
+      .eq('provider_status', 'ACTIVE'),
+    getActiveGames(),
+  ]);
+
+  const voucherIds = new Set<string>();
+  const gameIds = new Set<string>();
+  for (const row of (productRows as { game_id: string | null; category: string | null }[]) ?? []) {
+    if (!row.game_id) continue;
+    if (row.category === 'Voucher Game') voucherIds.add(row.game_id);
+    else gameIds.add(row.game_id);
+  }
+
+  return games
+    .filter((game) =>
+      // Entri yang punya produk in-game selalu dihitung sebagai game, meski
+      // sebagian produknya berupa voucher.
+      kind === 'voucher' ? voucherIds.has(game.id) && !gameIds.has(game.id) : gameIds.has(game.id),
+    )
+    .map((game) => ({ ...game, kind }))
+    .slice(0, limit);
+}
+
+/** Game yang ditonjolkan di beranda, mengikuti urutan `site.homeGameSlugs`. */
+export async function getGamesBySlugs(slugs: readonly string[]): Promise<Game[]> {
+  if (slugs.length === 0) return [];
+  const { data } = await supabaseAdmin()
+    .from('games')
+    .select('*')
+    .eq('is_active', true)
+    .in('slug', slugs as string[]);
+
+  const rows = (data as Game[]) ?? [];
+  // Pertahankan urutan yang ditulis di konfigurasi, bukan urutan dari database.
+  return slugs
+    .map((slug) => rows.find((row) => row.slug === slug))
+    .filter((row): row is Game => Boolean(row));
+}
+
+/** Banner untuk carousel beranda. */
+export async function getBanners(limit = 6) {
+  const { data } = await supabaseAdmin()
+    .from('banners')
+    .select('id, title, subtitle, image_url, link_url')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true })
+    .limit(limit);
+  return data ?? [];
 }
 
 export async function getGameBySlug(slug: string): Promise<Game | null> {

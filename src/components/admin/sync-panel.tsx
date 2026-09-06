@@ -56,8 +56,8 @@ export function SyncPanel() {
 
   return (
     <section className="card-surface p-4">
-      <h2 className="text-sm font-bold text-ink-100">Operasional Katalog</h2>
-      <p className="mt-1 text-xs text-ink-500">
+      <h2 className="text-sm font-bold text-fg">Operasional Katalog</h2>
+      <p className="mt-1 text-xs text-fg-faint">
         Sinkronisasi juga berjalan otomatis lewat cron. Tombol di sini untuk memaksa pembaruan
         segera.
       </p>
@@ -67,7 +67,7 @@ export function SyncPanel() {
           type="button"
           onClick={() => run('sync')}
           disabled={busy !== null}
-          className="inline-flex items-center gap-2 rounded-lg bg-flame-500 px-3.5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-flame-600 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg bg-brand-strong px-3.5 py-2.5 text-xs font-bold text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
         >
           {busy === 'sync' ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -81,7 +81,7 @@ export function SyncPanel() {
           type="button"
           onClick={() => run('recalculate')}
           disabled={busy !== null}
-          className="inline-flex items-center gap-2 rounded-lg border border-ink-700 px-3.5 py-2.5 text-xs font-bold text-ink-200 transition-colors hover:border-flame-500 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2.5 text-xs font-bold text-fg transition-colors hover:border-brand-strong disabled:opacity-60"
         >
           {busy === 'recalculate' ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -95,7 +95,7 @@ export function SyncPanel() {
           type="button"
           onClick={() => run('balance')}
           disabled={busy !== null}
-          className="inline-flex items-center gap-2 rounded-lg border border-ink-700 px-3.5 py-2.5 text-xs font-bold text-ink-200 transition-colors hover:border-flame-500 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2.5 text-xs font-bold text-fg transition-colors hover:border-brand-strong disabled:opacity-60"
         >
           {busy === 'balance' ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -107,28 +107,28 @@ export function SyncPanel() {
       </div>
 
       {balance && (
-        <div className="mt-4 grid gap-3 rounded-lg border border-ink-800 bg-ink-850 p-4 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 rounded-lg border border-line bg-surface-2 p-4 sm:grid-cols-3">
           <div>
-            <span className="text-xs text-ink-500">Sisa Saldo</span>
-            <p className="mt-1 text-lg font-extrabold text-mint-400">
+            <span className="text-xs text-fg-faint">Sisa Saldo</span>
+            <p className="mt-1 text-lg font-extrabold text-success">
               {formatRupiah(balance.balance)}
             </p>
           </div>
           <div>
-            <span className="text-xs text-ink-500">Tier</span>
-            <p className="mt-1 text-lg font-extrabold text-ink-100">
+            <span className="text-xs text-fg-faint">Tier</span>
+            <p className="mt-1 text-lg font-extrabold text-fg">
               {balance.tier ?? 'Belum ada'} ({balance.discount_percent}%)
             </p>
           </div>
           <div>
-            <span className="text-xs text-ink-500">Status Reseller</span>
-            <p className="mt-1 text-lg font-extrabold text-ink-100">{balance.reseller_status}</p>
+            <span className="text-xs text-fg-faint">Status Reseller</span>
+            <p className="mt-1 text-lg font-extrabold text-fg">{balance.reseller_status}</p>
           </div>
         </div>
       )}
 
       {message && (
-        <p className="mt-3 rounded-lg bg-ink-850 px-3 py-2.5 text-xs text-ink-300">{message}</p>
+        <p className="mt-3 rounded-lg bg-surface-2 px-3 py-2.5 text-xs text-fg-body">{message}</p>
       )}
     </section>
   );

@@ -4,7 +4,7 @@ import { site } from '@/lib/site';
 export const metadata: Metadata = {
   title: 'Syarat & Ketentuan',
   description:
-    'Syarat dan ketentuan penggunaan layanan Top Up Game Murah: aturan pemesanan, pembayaran, pengembalian dana, dan batasan tanggung jawab.',
+    'Syarat dan ketentuan penggunaan layanan Sayba Voucher: aturan pemesanan, pembayaran, pengembalian dana, dan batasan tanggung jawab.',
   alternates: { canonical: '/syarat-ketentuan' },
 };
 
@@ -79,16 +79,16 @@ const SECTIONS = [
 export default function SyaratKetentuanPage() {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-2xl font-extrabold text-ink-100">Syarat &amp; Ketentuan</h1>
-      <p className="mt-2 text-xs text-ink-500">Terakhir diperbarui: 5 September 2026</p>
+      <h1 className="text-2xl font-extrabold text-fg">Syarat &amp; Ketentuan</h1>
+      <p className="mt-2 text-xs text-fg-faint">Terakhir diperbarui: 5 September 2026</p>
 
       <div className="mt-8 space-y-7">
         {SECTIONS.map((section) => (
           <section key={section.title}>
-            <h2 className="text-base font-bold text-ink-100">{section.title}</h2>
+            <h2 className="text-base font-bold text-fg">{section.title}</h2>
             <div className="mt-2.5 space-y-2.5">
               {section.body.map((paragraph, index) => (
-                <p key={index} className="text-sm leading-relaxed text-ink-400">
+                <p key={index} className="text-sm leading-relaxed text-fg-muted">
                   {paragraph}
                 </p>
               ))}

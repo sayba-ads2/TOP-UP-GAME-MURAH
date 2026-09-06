@@ -36,7 +36,7 @@ export function AdminNav({ email, role }: { email: string; role: string }) {
               href={link.href}
               className={cn(
                 'inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
-                active ? 'bg-flame-500 text-white' : 'text-ink-300 hover:bg-ink-850',
+                active ? 'bg-brand-strong text-white' : 'text-fg-body hover:bg-surface-2',
               )}
             >
               <link.icon className="h-4 w-4" aria-hidden />
@@ -48,13 +48,13 @@ export function AdminNav({ email, role }: { email: string; role: string }) {
 
       <div className="flex items-center gap-3">
         <div className="text-right">
-          <span className="block text-xs font-semibold text-ink-200">{email}</span>
-          <span className="block text-[10px] uppercase tracking-wider text-ink-500">{role}</span>
+          <span className="block text-xs font-semibold text-fg">{email}</span>
+          <span className="block text-[10px] uppercase tracking-wider text-fg-faint">{role}</span>
         </div>
         <button
           type="button"
           onClick={handleLogout}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-ink-700 px-3 py-2 text-xs font-semibold text-ink-300 transition-colors hover:border-red-500/50 hover:text-red-400"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-xs font-semibold text-fg-body transition-colors hover:border-red-500/50 hover:text-danger"
         >
           <LogOut className="h-3.5 w-3.5" aria-hidden />
           Keluar

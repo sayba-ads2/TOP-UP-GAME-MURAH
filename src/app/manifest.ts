@@ -8,13 +8,14 @@ export default function manifest(): MetadataRoute.Manifest {
     description: site.description,
     start_url: '/',
     display: 'standalone',
-    background_color: '#0a0a0b',
-    theme_color: '#0a0a0b',
+    background_color: '#f8f8f7',
+    theme_color: '#ffffff',
     lang: 'id',
     orientation: 'portrait',
-    categories: ['games', 'shopping', 'finance'],
+    categories: ['shopping', 'games', 'finance'],
     icons: [
       { src: '/icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+      { src: '/logo.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],
   };
 }

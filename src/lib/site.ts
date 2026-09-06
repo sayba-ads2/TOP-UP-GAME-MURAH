@@ -5,23 +5,24 @@ import { publicEnv } from './env';
  * structured data (JSON-LD), sitemap, dan teks marketing di seluruh halaman.
  */
 export const site = {
-  name: 'Top Up Game Murah',
-  shortName: 'TopUpGameMurah',
-  legalName: 'Top Up Game Murah by Sayba Arc',
+  name: 'Sayba Voucher',
+  shortName: 'SaybaVoucher',
+  legalName: 'Sayba Voucher — Sayba Arc',
+  shortTagline: 'Voucher & Top Up Game',
   url: publicEnv.siteUrl,
-  logo: `${publicEnv.siteUrl}/icon.svg`,
+  logo: `${publicEnv.siteUrl}/logo.png`,
   /** Dirender on-the-fly oleh /api/og — tidak ada berkas statis yang perlu dijaga. */
   ogImage: `${publicEnv.siteUrl}/api/og`,
   locale: 'id_ID',
   language: 'id',
   currency: 'IDR',
 
-  tagline: 'Top Up Game Termurah, Tercepat, & Terpercaya di Pontianak',
+  tagline: 'Voucher Digital & Top Up Game Resmi, Harga Jujur',
   description:
-    'Top up game murah dan legal di Pontianak: Mobile Legends, Free Fire, PUBG Mobile, Genshin Impact, Honor of Kings, dan puluhan game lain. Proses otomatis 24 jam, bayar pakai QRIS, DANA, GoPay, OVO, ShopeePay, atau transfer bank. Tanpa perlu login akun game.',
+    'Sayba Voucher menjual voucher digital dan top up game resmi: Steam Wallet, Razer Gold, Google Play, PlayStation, Xbox, Garena Shell, sampai diamond Mobile Legends, Free Fire, dan PUBG Mobile. Proses otomatis 24 jam, bayar lewat QRIS atau e-wallet, tanpa perlu login akun.',
 
   contact: {
-    whatsapp: publicEnv.whatsapp || '6281234567890',
+    whatsapp: publicEnv.whatsapp || '6287803445749',
     email: 'sayba.help@gmail.com',
     hours: 'Setiap hari 08.00 - 23.00 WIB (sistem otomatis 24 jam)',
   },
@@ -60,29 +61,36 @@ export const site = {
     'Kayong Utara',
   ],
 
-  /** Kata kunci utama (head terms + long tail lokal). */
+  /** Kata kunci utama: voucher lebih dulu, top up game menyusul. */
   keywords: [
+    'sayba voucher',
+    'voucher game murah',
+    'jual voucher digital',
+    'voucher steam wallet murah',
+    'voucher razer gold',
+    'voucher google play murah',
+    'voucher playstation indonesia',
     'top up game murah',
-    'top up game murah pontianak',
-    'top up diamond murah pontianak',
-    'top up ml murah',
-    'top up mobile legends pontianak',
-    'top up free fire murah pontianak',
+    'top up mobile legends murah',
+    'top up free fire murah',
     'top up pubg mobile murah',
-    'top up genshin impact murah',
-    'jual diamond ml pontianak',
-    'top up game kalimantan barat',
-    'top up game 24 jam',
-    'top up game qris',
-    'topup game murah legal',
-    'top up game terpercaya pontianak',
+    'voucher game pontianak',
+    'top up game pontianak',
+    'voucher game kalimantan barat',
+    'voucher game qris 24 jam',
     'sayba arc',
   ],
+
+  /**
+   * Slug game yang ditonjolkan di beranda. Game lain tetap punya halaman
+   * sendiri dan tetap terindeks — hanya tidak ditampilkan di bagian ini.
+   */
+  homeGameSlugs: ['mobile-legends', 'free-fire', 'pubg-mobile'],
 } as const;
 
 export type Site = typeof site;
 
-/** Judul halaman standar: "<judul> | Top Up Game Murah" */
+/** Judul halaman standar: "<judul> | Sayba Voucher" */
 export function pageTitle(title: string): string {
   return `${title} | ${site.name}`;
 }

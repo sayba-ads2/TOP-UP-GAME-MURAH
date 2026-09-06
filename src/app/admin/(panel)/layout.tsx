@@ -27,14 +27,14 @@ export default async function AdminPanelLayout({ children }: { children: React.R
 
     return (
       <div className="mx-auto max-w-md px-4 py-24 text-center">
-        <h1 className="text-xl font-extrabold text-ink-100">Akses Ditolak</h1>
-        <p className="mt-3 text-sm leading-relaxed text-ink-400">
-          Akun <span className="font-semibold text-ink-200">{user.email}</span> belum terdaftar
+        <h1 className="text-xl font-extrabold text-fg">Akses Ditolak</h1>
+        <p className="mt-3 text-sm leading-relaxed text-fg-muted">
+          Akun <span className="font-semibold text-fg">{user.email}</span> belum terdaftar
           sebagai admin. Tambahkan barisnya ke tabel{' '}
-          <code className="rounded bg-ink-850 px-1.5 py-0.5 text-flame-400">admin_users</code> di
+          <code className="rounded bg-surface-2 px-1.5 py-0.5 text-brand-strong">admin_users</code> di
           Supabase, lalu muat ulang halaman ini.
         </p>
-        <Link href="/" className="mt-6 inline-flex text-sm font-semibold text-flame-400 underline">
+        <Link href="/" className="mt-6 inline-flex text-sm font-semibold text-brand-strong underline">
           Kembali ke beranda
         </Link>
       </div>

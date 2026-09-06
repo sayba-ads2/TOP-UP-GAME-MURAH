@@ -35,10 +35,10 @@ export default async function AdminProductsPage({ searchParams }: Props) {
   return (
     <div className="space-y-4">
       <div className="card-surface p-4">
-        <h1 className="text-base font-bold text-ink-100">Produk &amp; Margin</h1>
-        <p className="mt-1.5 text-sm leading-relaxed text-ink-400">
+        <h1 className="text-base font-bold text-fg">Produk &amp; Margin</h1>
+        <p className="mt-1.5 text-sm leading-relaxed text-fg-muted">
           Margin global saat ini:{' '}
-          <strong className="text-flame-400">
+          <strong className="text-brand-strong">
             {pricing.margin_type === 'percent' ? `${pricing.margin_value}%` : `Rp${pricing.margin_value}`}
           </strong>{' '}
           (minimum Rp{pricing.min_margin.toLocaleString('id-ID')}, dibulatkan ke atas kelipatan Rp

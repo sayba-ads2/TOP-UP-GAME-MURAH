@@ -11,10 +11,10 @@ export const runtime = 'edge';
  */
 export function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const title = searchParams.get('title')?.slice(0, 80) ?? 'Top Up Game Murah';
+  const title = searchParams.get('title')?.slice(0, 80) ?? 'Sayba Voucher';
   const subtitle =
     searchParams.get('subtitle')?.slice(0, 120) ??
-    'Top Up Diamond & Voucher Game Termurah di Pontianak';
+    'Voucher digital & top up game resmi, harga jujur';
 
   return new ImageResponse(
     (
@@ -50,7 +50,7 @@ export function GET(request: Request) {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <span style={{ fontSize: 26, fontWeight: 800, color: '#ededf0' }}>
-              topupgamemurah.sayba.id
+              topup.sayba.id
             </span>
             <span style={{ fontSize: 18, color: '#8b8b98', marginTop: 4 }}>by Sayba Arc</span>
           </div>
@@ -74,7 +74,7 @@ export function GET(request: Request) {
         </div>
 
         <div style={{ display: 'flex', gap: 14 }}>
-          {['Proses Otomatis 24 Jam', 'Tanpa Login Akun', 'QRIS & Semua E-Wallet'].map((chip) => (
+          {['Voucher & Top Up Game', 'Otomatis 24 Jam', 'QRIS & E-Wallet'].map((chip) => (
             <span
               key={chip}
               style={{

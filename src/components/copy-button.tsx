@@ -31,11 +31,11 @@ export function CopyButton({
       type="button"
       onClick={handleCopy}
       className={cn(
-        'inline-flex items-center gap-1.5 rounded-lg border border-ink-700 px-2.5 py-1.5 text-xs font-semibold text-ink-300 transition-colors hover:border-flame-500 hover:text-flame-400',
+        'inline-flex items-center gap-1.5 rounded-lg border border-line px-2.5 py-1.5 text-xs font-semibold text-fg-body transition-colors hover:border-brand-strong hover:text-brand-strong',
         className,
       )}
     >
-      {copied ? <Check className="h-3.5 w-3.5 text-mint-400" aria-hidden /> : <Copy className="h-3.5 w-3.5" aria-hidden />}
+      {copied ? <Check className="h-3.5 w-3.5 text-success" aria-hidden /> : <Copy className="h-3.5 w-3.5" aria-hidden />}
       {copied ? 'Tersalin' : label}
     </button>
   );

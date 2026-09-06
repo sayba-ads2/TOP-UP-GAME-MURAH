@@ -28,7 +28,7 @@ function Toggle({
       onClick={() => onChange(!checked)}
       className={cn(
         'relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50',
-        checked ? 'bg-mint-500' : 'bg-ink-700',
+        checked ? 'bg-success' : 'bg-surface-3',
       )}
     >
       <span
@@ -56,11 +56,11 @@ function EditForm({ game, onDone }: { game: Game; onDone: () => void }) {
   }
 
   const field =
-    'w-full rounded-lg border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm text-ink-100 focus:border-flame-500 focus:outline-none';
-  const label = 'mb-1 block text-[11px] font-semibold uppercase tracking-wider text-ink-500';
+    'w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-fg focus:border-brand-strong focus:outline-none';
+  const label = 'mb-1 block text-[11px] font-semibold uppercase tracking-wider text-fg-faint';
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-ink-800 bg-ink-850 p-4">
+    <form onSubmit={handleSubmit} className="border-t border-line bg-surface-2 p-4">
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <div>
           <label className={label} htmlFor={`name-${game.id}`}>Nama Game</label>
@@ -145,7 +145,7 @@ function EditForm({ game, onDone }: { game: Game; onDone: () => void }) {
         </div>
       </div>
 
-      <label className="mt-3 flex items-center gap-2 text-sm text-ink-300">
+      <label className="mt-3 flex items-center gap-2 text-sm text-fg-body">
         <input type="checkbox" name="needs_server_id" defaultChecked={game.needs_server_id} />
         Butuh Server / Zone ID
       </label>
@@ -154,7 +154,7 @@ function EditForm({ game, onDone }: { game: Game; onDone: () => void }) {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-2 rounded-lg bg-flame-500 px-4 py-2 text-xs font-bold text-white hover:bg-flame-600 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg bg-brand-strong px-4 py-2 text-xs font-bold text-white hover:bg-brand-hover disabled:opacity-60"
         >
           {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />}
           Simpan
@@ -162,11 +162,11 @@ function EditForm({ game, onDone }: { game: Game; onDone: () => void }) {
         <button
           type="button"
           onClick={onDone}
-          className="rounded-lg border border-ink-700 px-4 py-2 text-xs font-bold text-ink-300"
+          className="rounded-lg border border-line px-4 py-2 text-xs font-bold text-fg-body"
         >
           Tutup
         </button>
-        {message && <span className="text-xs text-ink-400">{message}</span>}
+        {message && <span className="text-xs text-fg-muted">{message}</span>}
       </div>
     </form>
   );
@@ -189,41 +189,41 @@ export function GamesTable({ games }: { games: Game[] }) {
 
   return (
     <div className="card-surface overflow-hidden">
-      <div className="relative border-b border-ink-800 p-3">
-        <Search className="pointer-events-none absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-500" aria-hidden />
+      <div className="relative border-b border-line p-3">
+        <Search className="pointer-events-none absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 text-fg-faint" aria-hidden />
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Cari game…"
           aria-label="Cari game"
-          className="w-full rounded-lg border border-ink-700 bg-ink-900 py-2.5 pl-10 pr-3 text-sm text-ink-100 focus:border-flame-500 focus:outline-none"
+          className="w-full rounded-lg border border-line bg-surface py-2.5 pl-10 pr-3 text-sm text-fg focus:border-brand-strong focus:outline-none"
         />
       </div>
 
-      <ul className="divide-y divide-ink-800">
+      <ul className="divide-y divide-line">
         {filtered.map((game) => (
           <li key={game.id}>
             <div className="flex flex-wrap items-center gap-4 px-4 py-3">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="truncate text-sm font-semibold text-ink-100">{game.name}</span>
+                  <span className="truncate text-sm font-semibold text-fg">{game.name}</span>
                   {game.is_active && (
                     <Link
                       href={`/${game.slug}`}
                       target="_blank"
-                      className="text-ink-500 hover:text-flame-400"
+                      className="text-fg-faint hover:text-brand-strong"
                       aria-label={`Buka halaman ${game.name}`}
                     >
                       <ExternalLink className="h-3.5 w-3.5" aria-hidden />
                     </Link>
                   )}
                 </div>
-                <span className="block truncate font-mono text-[11px] text-ink-500">
+                <span className="block truncate font-mono text-[11px] text-fg-faint">
                   /{game.slug} · {game.provider_operator ?? '—'}
                 </span>
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-ink-400">
+              <div className="flex items-center gap-2 text-xs text-fg-muted">
                 <span className="w-12 text-right">Aktif</span>
                 <Toggle
                   checked={game.is_active}
@@ -233,7 +233,7 @@ export function GamesTable({ games }: { games: Game[] }) {
                 />
               </div>
 
-              <div className="flex items-center gap-2 text-xs text-ink-400">
+              <div className="flex items-center gap-2 text-xs text-fg-muted">
                 <span className="w-14 text-right">Populer</span>
                 <Toggle
                   checked={game.is_featured}
@@ -246,7 +246,7 @@ export function GamesTable({ games }: { games: Game[] }) {
               <button
                 type="button"
                 onClick={() => setEditing(editing === game.id ? null : game.id)}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-ink-700 px-3 py-2 text-xs font-semibold text-ink-300 hover:border-flame-500 hover:text-flame-400"
+                className="inline-flex items-center gap-1.5 rounded-lg border border-line px-3 py-2 text-xs font-semibold text-fg-body hover:border-brand-strong hover:text-brand-strong"
               >
                 <Pencil className="h-3.5 w-3.5" aria-hidden />
                 Ubah
@@ -258,7 +258,7 @@ export function GamesTable({ games }: { games: Game[] }) {
         ))}
 
         {filtered.length === 0 && (
-          <li className="px-4 py-12 text-center text-sm text-ink-500">
+          <li className="px-4 py-12 text-center text-sm text-fg-faint">
             Tidak ada game yang cocok. Jalankan sinkronisasi katalog lebih dulu.
           </li>
         )}

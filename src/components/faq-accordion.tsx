@@ -13,13 +13,13 @@ export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
       {faqs.map((faq) => (
         <details key={faq.id} className="card-surface group px-5 py-4 [&_summary::-webkit-details-marker]:hidden">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-            <h3 className="text-sm font-semibold text-ink-100">{faq.question}</h3>
+            <h3 className="text-sm font-semibold text-fg">{faq.question}</h3>
             <ChevronDown
-              className="h-4 w-4 shrink-0 text-ink-500 transition-transform group-open:rotate-180"
+              className="h-4 w-4 shrink-0 text-fg-faint transition-transform group-open:rotate-180"
               aria-hidden
             />
           </summary>
-          <p className="mt-3 border-t border-ink-800 pt-3 text-sm leading-relaxed text-ink-400">
+          <p className="mt-3 border-t border-line pt-3 text-sm leading-relaxed text-fg-muted">
             {faq.answer}
           </p>
         </details>

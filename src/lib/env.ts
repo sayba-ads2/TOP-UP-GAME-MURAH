@@ -17,7 +17,7 @@ function required(name: string, value: string | undefined): string {
 
 /** Variabel yang aman dibaca di browser. */
 export const publicEnv = {
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://topupgamemurah.sayba.id',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://topup.sayba.id',
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? '',
   supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? '',
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP ?? '',

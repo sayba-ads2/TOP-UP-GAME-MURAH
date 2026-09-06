@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
  * Penerima Webhook Relay NexShop.
  *
  * URL yang didaftarkan di Partner Portal:
- *   https://topupgamemurah.sayba.id/api/webhook/nexshop
+ *   https://topup.sayba.id/api/webhook/nexshop
  *
  * Tiga aturan yang ditegakkan di sini:
  * 1. Signature diverifikasi dari BYTE MENTAH body sebelum JSON di-parse.

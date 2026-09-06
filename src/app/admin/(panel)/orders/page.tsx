@@ -45,8 +45,8 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               href={`/admin/orders?status=${filter.key}`}
               className={
                 status === filter.key
-                  ? 'rounded-lg bg-flame-500 px-3 py-2 text-xs font-bold text-white'
-                  : 'rounded-lg border border-ink-700 px-3 py-2 text-xs font-semibold text-ink-300 hover:border-ink-600'
+                  ? 'rounded-lg bg-brand-strong px-3 py-2 text-xs font-bold text-white'
+                  : 'rounded-lg border border-line px-3 py-2 text-xs font-semibold text-fg-body hover:border-line-strong'
               }
             >
               {filter.label}
@@ -61,11 +61,11 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             defaultValue={q ?? ''}
             placeholder="Cari invoice / User ID / WA"
             aria-label="Cari pesanan"
-            className="w-56 rounded-lg border border-ink-700 bg-ink-900 px-3 py-2 text-sm text-ink-100 focus:border-flame-500 focus:outline-none"
+            className="w-56 rounded-lg border border-line bg-surface px-3 py-2 text-sm text-fg focus:border-brand-strong focus:outline-none"
           />
           <button
             type="submit"
-            className="rounded-lg border border-ink-700 px-3 py-2 text-xs font-bold text-ink-300 hover:border-flame-500"
+            className="rounded-lg border border-line px-3 py-2 text-xs font-bold text-fg-body hover:border-brand-strong"
           >
             Cari
           </button>
@@ -74,7 +74,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
 
       <div className="card-surface overflow-x-auto">
         <table className="w-full text-left text-sm">
-          <thead className="bg-ink-850 text-[11px] uppercase tracking-wider text-ink-500">
+          <thead className="bg-surface-2 text-[11px] uppercase tracking-wider text-fg-faint">
             <tr>
               <th className="px-4 py-2.5 font-semibold">Invoice</th>
               <th className="px-4 py-2.5 font-semibold">Produk</th>
@@ -85,50 +85,50 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
               <th className="px-4 py-2.5 font-semibold">Aksi</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-ink-800">
+          <tbody className="divide-y divide-line">
             {orders.map((order) => (
-              <tr key={order.id} className="align-top hover:bg-ink-850/60">
+              <tr key={order.id} className="align-top hover:bg-surface-2/60">
                 <td className="px-4 py-3">
                   <Link
                     href={`/invoice/${order.order_code}`}
                     target="_blank"
-                    className="font-mono text-xs text-flame-400 hover:underline"
+                    className="font-mono text-xs text-brand-strong hover:underline"
                   >
                     {order.order_code}
                   </Link>
-                  <span className="mt-1 block text-[11px] text-ink-500">
+                  <span className="mt-1 block text-[11px] text-fg-faint">
                     {formatDateTime(order.created_at)}
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="block text-ink-200">{order.product_name}</span>
-                  <span className="block text-[11px] text-ink-500">{order.game_name}</span>
+                  <span className="block text-fg">{order.product_name}</span>
+                  <span className="block text-[11px] text-fg-faint">{order.game_name}</span>
                 </td>
                 <td className="px-4 py-3">
-                  <span className="block font-mono text-xs text-ink-300">
+                  <span className="block font-mono text-xs text-fg-body">
                     {order.target}
                     {order.server_id ? ` (${order.server_id})` : ''}
                   </span>
                   {order.nickname && (
-                    <span className="block text-[11px] text-mint-400">{order.nickname}</span>
+                    <span className="block text-[11px] text-success">{order.nickname}</span>
                   )}
                   {order.contact_whatsapp && (
                     <a
                       href={`https://wa.me/${order.contact_whatsapp}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block text-[11px] text-ink-500 hover:text-flame-400"
+                      className="block text-[11px] text-fg-faint hover:text-brand-strong"
                     >
                       +{order.contact_whatsapp}
                     </a>
                   )}
                 </td>
-                <td className="px-4 py-3 text-xs text-ink-400">{order.payment_method}</td>
+                <td className="px-4 py-3 text-xs text-fg-muted">{order.payment_method}</td>
                 <td className="px-4 py-3">
-                  <span className="block font-semibold text-ink-200">
+                  <span className="block font-semibold text-fg">
                     {formatRupiah(order.total_amount)}
                   </span>
-                  <span className="block text-[11px] text-mint-400">
+                  <span className="block text-[11px] text-success">
                     +{formatRupiah(order.profit_amount)}
                   </span>
                 </td>
@@ -138,7 +138,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
                     <StatusBadge status={order.fulfillment_status} />
                   </div>
                   {order.provider_message && (
-                    <span className="mt-1 block max-w-40 text-[11px] text-red-400">
+                    <span className="mt-1 block max-w-40 text-[11px] text-danger">
                       {order.provider_message}
                     </span>
                   )}
@@ -154,7 +154,7 @@ export default async function AdminOrdersPage({ searchParams }: Props) {
             ))}
             {orders.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-12 text-center text-sm text-ink-500">
+                <td colSpan={7} className="px-4 py-12 text-center text-sm text-fg-faint">
                   Tidak ada pesanan pada filter ini.
                 </td>
               </tr>

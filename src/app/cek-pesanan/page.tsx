@@ -21,13 +21,13 @@ export default function CekPesananPage() {
       />
       <div className="mx-auto max-w-xl px-4 py-14">
         <div className="text-center">
-          <span className="inline-grid h-12 w-12 place-items-center rounded-xl bg-ink-850 ring-1 ring-ink-700">
-            <Receipt className="h-6 w-6 text-flame-500" aria-hidden />
+          <span className="inline-grid h-12 w-12 place-items-center rounded-xl bg-surface-2 ring-1 ring-line">
+            <Receipt className="h-6 w-6 text-brand" aria-hidden />
           </span>
-          <h1 className="mt-4 text-2xl font-extrabold text-ink-100">Cek Status Pesanan</h1>
-          <p className="mt-2 text-sm leading-relaxed text-ink-400">
+          <h1 className="mt-4 text-2xl font-extrabold text-fg">Cek Status Pesanan</h1>
+          <p className="mt-2 text-sm leading-relaxed text-fg-muted">
             Masukkan kode invoice yang kamu terima saat checkout, misalnya
-            <span className="mx-1 font-mono text-ink-300">TGM-260905-K7QX4M</span>.
+            <span className="mx-1 font-mono text-fg-body">TGM-260905-K7QX4M</span>.
           </p>
         </div>
 
@@ -36,8 +36,8 @@ export default function CekPesananPage() {
         </div>
 
         <div className="card-surface mt-8 p-5">
-          <h2 className="text-sm font-bold text-ink-100">Kode invoice kamu hilang?</h2>
-          <p className="mt-2 text-sm leading-relaxed text-ink-400">
+          <h2 className="text-sm font-bold text-fg">Kode invoice kamu hilang?</h2>
+          <p className="mt-2 text-sm leading-relaxed text-fg-muted">
             Hubungi admin lewat WhatsApp dan sebutkan User ID game, nominal, serta perkiraan
             waktu transaksi. Kami akan mencarikan pesanannya untuk kamu.
           </p>

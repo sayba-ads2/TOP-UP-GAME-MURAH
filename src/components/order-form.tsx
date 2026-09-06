@@ -22,12 +22,12 @@ type Props = {
 function StepHeading({ step, title, hint }: { step: number; title: string; hint?: string }) {
   return (
     <div className="mb-4 flex items-start gap-3">
-      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-flame-500 text-sm font-bold text-white">
+      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-brand-strong text-sm font-bold text-white">
         {step}
       </span>
       <div>
-        <h2 className="text-base font-bold text-ink-100">{title}</h2>
-        {hint && <p className="mt-0.5 text-xs text-ink-500">{hint}</p>}
+        <h2 className="text-base font-bold text-fg">{title}</h2>
+        {hint && <p className="mt-0.5 text-xs text-fg-faint">{hint}</p>}
       </div>
     </div>
   );
@@ -161,7 +161,7 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
 
         <div className={cn('grid gap-3', needsServer && !game.server_options && 'sm:grid-cols-2')}>
           <div>
-            <label htmlFor="user-id" className="mb-1.5 block text-xs font-semibold text-ink-300">
+            <label htmlFor="user-id" className="mb-1.5 block text-xs font-semibold text-fg-body">
               {game.id_label}
             </label>
             <input
@@ -174,21 +174,21 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
               inputMode="text"
               autoComplete="off"
               placeholder={game.id_placeholder}
-              className="w-full rounded-lg border border-ink-700 bg-ink-850 px-3.5 py-3 text-sm text-ink-100 placeholder:text-ink-600 focus:border-flame-500 focus:outline-none"
+              className="w-full rounded-lg border border-line bg-surface-2 px-3.5 py-3 text-sm text-fg placeholder:text-fg-faint focus:border-brand-strong focus:outline-none"
             />
           </div>
 
           {needsServer &&
             (game.server_options && game.server_options.length > 0 ? (
               <div>
-                <label htmlFor="server-id" className="mb-1.5 block text-xs font-semibold text-ink-300">
+                <label htmlFor="server-id" className="mb-1.5 block text-xs font-semibold text-fg-body">
                   {game.server_label}
                 </label>
                 <select
                   id="server-id"
                   value={serverId}
                   onChange={(e) => setServerId(e.target.value)}
-                  className="w-full rounded-lg border border-ink-700 bg-ink-850 px-3.5 py-3 text-sm text-ink-100 focus:border-flame-500 focus:outline-none"
+                  className="w-full rounded-lg border border-line bg-surface-2 px-3.5 py-3 text-sm text-fg focus:border-brand-strong focus:outline-none"
                 >
                   <option value="">Pilih server</option>
                   {game.server_options.map((opt) => (
@@ -200,7 +200,7 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
               </div>
             ) : (
               <div>
-                <label htmlFor="server-id" className="mb-1.5 block text-xs font-semibold text-ink-300">
+                <label htmlFor="server-id" className="mb-1.5 block text-xs font-semibold text-fg-body">
                   {game.server_label}
                 </label>
                 <input
@@ -213,7 +213,7 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
                   inputMode="numeric"
                   autoComplete="off"
                   placeholder={game.server_placeholder ?? ''}
-                  className="w-full rounded-lg border border-ink-700 bg-ink-850 px-3.5 py-3 text-sm text-ink-100 placeholder:text-ink-600 focus:border-flame-500 focus:outline-none"
+                  className="w-full rounded-lg border border-line bg-surface-2 px-3.5 py-3 text-sm text-fg placeholder:text-fg-faint focus:border-brand-strong focus:outline-none"
                 />
               </div>
             ))}
@@ -225,19 +225,19 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
               type="button"
               onClick={handleCheckNickname}
               disabled={checking}
-              className="inline-flex items-center gap-2 rounded-lg border border-ink-700 px-3.5 py-2 text-xs font-semibold text-ink-200 transition-colors hover:border-flame-500 hover:text-flame-400 disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-lg border border-line px-3.5 py-2 text-xs font-semibold text-fg transition-colors hover:border-brand-strong hover:text-brand-strong disabled:opacity-60"
             >
               {checking ? <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden /> : null}
               Cek Nickname
             </button>
             {nickname && (
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-mint-500/10 px-3 py-2 text-xs font-semibold text-mint-400">
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-success-soft px-3 py-2 text-xs font-semibold text-success">
                 <BadgeCheck className="h-4 w-4" aria-hidden />
                 {nickname}
               </span>
             )}
             {checkError && (
-              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-red-400">
+              <span className="inline-flex items-center gap-1.5 text-xs font-medium text-danger">
                 <AlertCircle className="h-4 w-4" aria-hidden />
                 {checkError}
               </span>
@@ -251,7 +251,7 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
         <StepHeading step={2} title="Pilih Nominal" hint="Harga sudah termasuk semua biaya layanan." />
 
         {products.length === 0 ? (
-          <p className="rounded-lg border border-ink-700 bg-ink-850 px-4 py-6 text-center text-sm text-ink-400">
+          <p className="rounded-lg border border-line bg-surface-2 px-4 py-6 text-center text-sm text-fg-muted">
             Produk untuk game ini sedang kosong. Coba lagi nanti atau hubungi admin.
           </p>
         ) : (
@@ -267,23 +267,23 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
                   className={cn(
                     'relative rounded-lg border p-3 text-left transition-colors',
                     selected
-                      ? 'border-flame-500 bg-flame-500/10'
-                      : 'border-ink-700 bg-ink-850 hover:border-ink-600',
+                      ? 'border-brand-strong bg-brand-soft'
+                      : 'border-line bg-surface-2 hover:border-line-strong',
                   )}
                 >
                   {p.label && (
-                    <span className="absolute right-2 top-2 rounded bg-flame-500 px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
+                    <span className="absolute right-2 top-2 rounded bg-brand-strong px-1.5 py-0.5 text-[9px] font-bold uppercase text-white">
                       {p.label}
                     </span>
                   )}
-                  <span className="block pr-10 text-xs font-semibold leading-snug text-ink-100">
+                  <span className="block pr-10 text-xs font-semibold leading-snug text-fg">
                     {p.name}
                   </span>
-                  <span className="mt-2 block text-sm font-bold text-flame-400">
+                  <span className="mt-2 block text-sm font-bold text-brand-strong">
                     {formatRupiah(p.sell_price)}
                   </span>
                   {p.base_price > p.sell_price && (
-                    <span className="mt-0.5 block text-[11px] text-ink-500 line-through">
+                    <span className="mt-0.5 block text-[11px] text-fg-faint line-through">
                       {formatRupiah(p.base_price)}
                     </span>
                   )}
@@ -301,7 +301,7 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
         <div className="space-y-4">
           {groupedMethods.map(([group, methods]) => (
             <div key={group}>
-              <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-ink-500">
+              <h3 className="mb-2 text-[11px] font-bold uppercase tracking-wider text-fg-faint">
                 {group}
               </h3>
               <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
@@ -319,12 +319,12 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
                       className={cn(
                         'rounded-lg border p-3 text-left transition-colors',
                         selected
-                          ? 'border-flame-500 bg-flame-500/10'
-                          : 'border-ink-700 bg-ink-850 hover:border-ink-600',
+                          ? 'border-brand-strong bg-brand-soft'
+                          : 'border-line bg-surface-2 hover:border-line-strong',
                       )}
                     >
-                      <span className="block text-xs font-semibold text-ink-100">{m.name}</span>
-                      <span className="mt-1 block text-[11px] text-ink-500">
+                      <span className="block text-xs font-semibold text-fg">{m.name}</span>
+                      <span className="mt-1 block text-[11px] text-fg-faint">
                         {mFee > 0 ? `+ ${formatRupiah(mFee)} biaya` : 'Tanpa biaya tambahan'}
                       </span>
                     </button>
@@ -345,7 +345,7 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
         />
         <div className="grid gap-3 sm:grid-cols-2">
           <div>
-            <label htmlFor="wa" className="mb-1.5 block text-xs font-semibold text-ink-300">
+            <label htmlFor="wa" className="mb-1.5 block text-xs font-semibold text-fg-body">
               Nomor WhatsApp{requireWhatsapp ? '' : ' (opsional)'}
             </label>
             <input
@@ -355,11 +355,11 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
               inputMode="tel"
               autoComplete="tel"
               placeholder="081234567890"
-              className="w-full rounded-lg border border-ink-700 bg-ink-850 px-3.5 py-3 text-sm text-ink-100 placeholder:text-ink-600 focus:border-flame-500 focus:outline-none"
+              className="w-full rounded-lg border border-line bg-surface-2 px-3.5 py-3 text-sm text-fg placeholder:text-fg-faint focus:border-brand-strong focus:outline-none"
             />
           </div>
           <div>
-            <label htmlFor="email" className="mb-1.5 block text-xs font-semibold text-ink-300">
+            <label htmlFor="email" className="mb-1.5 block text-xs font-semibold text-fg-body">
               Email (opsional)
             </label>
             <input
@@ -369,33 +369,33 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
               placeholder="nama@email.com"
-              className="w-full rounded-lg border border-ink-700 bg-ink-850 px-3.5 py-3 text-sm text-ink-100 placeholder:text-ink-600 focus:border-flame-500 focus:outline-none"
+              className="w-full rounded-lg border border-line bg-surface-2 px-3.5 py-3 text-sm text-fg placeholder:text-fg-faint focus:border-brand-strong focus:outline-none"
             />
           </div>
         </div>
       </section>
 
       {/* ------------------------------------------------------------- total */}
-      <section className="card-surface sticky bottom-3 z-10 p-5 shadow-2xl shadow-black/50">
+      <section className="card-surface sticky bottom-3 z-10 p-5 shadow-2xl shadow-fg/10">
         <div className="mb-3 space-y-1.5 text-sm">
-          <div className="flex justify-between text-ink-400">
+          <div className="flex justify-between text-fg-muted">
             <span>{product ? product.name : 'Belum memilih nominal'}</span>
-            <span className="text-ink-200">{formatRupiah(product?.sell_price ?? 0)}</span>
+            <span className="text-fg">{formatRupiah(product?.sell_price ?? 0)}</span>
           </div>
           {fee > 0 && (
-            <div className="flex justify-between text-ink-400">
+            <div className="flex justify-between text-fg-muted">
               <span>Biaya {method?.name}</span>
-              <span className="text-ink-200">{formatRupiah(fee)}</span>
+              <span className="text-fg">{formatRupiah(fee)}</span>
             </div>
           )}
-          <div className="flex items-center justify-between border-t border-ink-800 pt-2.5">
-            <span className="text-sm font-semibold text-ink-200">Total Bayar</span>
-            <span className="text-xl font-extrabold text-flame-400">{formatRupiah(total)}</span>
+          <div className="flex items-center justify-between border-t border-line pt-2.5">
+            <span className="text-sm font-semibold text-fg">Total Bayar</span>
+            <span className="text-xl font-extrabold text-brand-strong">{formatRupiah(total)}</span>
           </div>
         </div>
 
         {formError && (
-          <p className="mb-3 flex items-start gap-2 rounded-lg bg-red-500/10 px-3 py-2.5 text-xs font-medium text-red-400">
+          <p className="mb-3 flex items-start gap-2 rounded-lg bg-danger-soft px-3 py-2.5 text-xs font-medium text-danger">
             <AlertCircle className="mt-px h-4 w-4 shrink-0" aria-hidden />
             {formError}
           </p>
@@ -404,7 +404,7 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
         <button
           type="submit"
           disabled={submitting || !product || !method}
-          className="flex w-full items-center justify-center gap-2 rounded-xl bg-flame-500 py-3.5 text-sm font-bold text-white transition-colors hover:bg-flame-600 disabled:cursor-not-allowed disabled:bg-ink-700 disabled:text-ink-500"
+          className="flex w-full items-center justify-center gap-2 rounded-xl bg-brand-strong py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-hover disabled:cursor-not-allowed disabled:bg-surface-3 disabled:text-fg-faint"
         >
           {submitting ? (
             <>
@@ -419,8 +419,8 @@ export function OrderForm({ game, products, paymentMethods, requireWhatsapp }: P
           )}
         </button>
 
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-ink-500">
-          <ShieldCheck className="h-3.5 w-3.5 text-mint-500" aria-hidden />
+        <p className="mt-3 flex items-center justify-center gap-1.5 text-[11px] text-fg-faint">
+          <ShieldCheck className="h-3.5 w-3.5 text-success" aria-hidden />
           Tanpa login akun game · Proses otomatis · Dana kembali bila gagal
         </p>
       </section>

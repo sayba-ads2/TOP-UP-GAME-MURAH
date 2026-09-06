@@ -7,9 +7,9 @@ import { site } from '@/lib/site';
 export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: 'Daftar Semua Game — Top Up Diamond & Voucher Murah',
+  title: 'Top Up Game — Daftar Semua Game',
   description:
-    'Daftar lengkap game yang bisa di-top up di Top Up Game Murah: Mobile Legends, Free Fire, PUBG Mobile, Genshin Impact, Honor of Kings, Valorant, Roblox, dan lainnya. Harga distributor, proses otomatis 24 jam.',
+    'Daftar lengkap game yang bisa di-top up di Sayba Voucher: Mobile Legends, Free Fire, PUBG Mobile, Genshin Impact, Honor of Kings, Valorant, dan lainnya. Harga distributor, proses otomatis 24 jam, tanpa login akun.',
   alternates: { canonical: '/games' },
 };
 
@@ -40,10 +40,11 @@ export default async function GamesPage() {
       />
 
       <div className="mx-auto max-w-6xl px-4 py-10">
-        <h1 className="text-2xl font-extrabold text-ink-100">Semua Game</h1>
-        <p className="mb-7 mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">
+        <h1 className="text-2xl font-bold tracking-tight text-fg">Top Up Game</h1>
+        <p className="mb-7 mt-2 max-w-2xl text-sm leading-relaxed text-fg-muted">
           {games.length} game siap top up dengan harga distributor. Ketik nama game di kolom
-          pencarian untuk menemukannya lebih cepat.
+          pencarian untuk menemukannya lebih cepat. Cari kode voucher?{' '}
+          <a href="/voucher" className="font-medium text-brand-strong underline">Lihat halaman voucher</a>.
         </p>
         <GameBrowser games={games} cheapest={cheapest} />
       </div>

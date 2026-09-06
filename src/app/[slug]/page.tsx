@@ -88,45 +88,45 @@ export default async function GamePage({ params }: Props) {
       />
 
       {/* ========================================================== BREADCRUMB */}
-      <nav aria-label="Breadcrumb" className="border-b border-ink-800 bg-ink-900">
-        <ol className="mx-auto flex max-w-6xl items-center gap-1.5 overflow-x-auto px-4 py-3 text-xs text-ink-500 no-scrollbar">
-          <li><Link href="/" className="hover:text-flame-400">Beranda</Link></li>
+      <nav aria-label="Breadcrumb" className="border-b border-line bg-surface">
+        <ol className="mx-auto flex max-w-6xl items-center gap-1.5 overflow-x-auto px-4 py-3 text-xs text-fg-faint no-scrollbar">
+          <li><Link href="/" className="hover:text-brand-strong">Beranda</Link></li>
           <ChevronRight className="h-3 w-3 shrink-0" aria-hidden />
-          <li><Link href="/games" className="hover:text-flame-400">Semua Game</Link></li>
+          <li><Link href="/games" className="hover:text-brand-strong">Semua Game</Link></li>
           <ChevronRight className="h-3 w-3 shrink-0" aria-hidden />
-          <li className="whitespace-nowrap font-semibold text-ink-300" aria-current="page">
+          <li className="whitespace-nowrap font-semibold text-fg-body" aria-current="page">
             Top Up {game.name}
           </li>
         </ol>
       </nav>
 
       {/* =============================================================== HEADER */}
-      <section className="aurora border-b border-ink-800">
+      <section className="aurora border-b border-line">
         <div className="mx-auto max-w-6xl px-4 py-8">
           <div className="flex flex-wrap items-start gap-5">
-            <span className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl bg-ink-800 text-2xl font-black text-flame-500 ring-1 ring-ink-700">
+            <span className="grid h-20 w-20 shrink-0 place-items-center rounded-2xl bg-surface-3 text-2xl font-black text-brand ring-1 ring-line">
               {game.name.slice(0, 2).toUpperCase()}
             </span>
             <div className="min-w-0 flex-1">
-              <h1 className="text-2xl font-extrabold tracking-tight text-ink-100 md:text-3xl">
+              <h1 className="text-2xl font-extrabold tracking-tight text-fg md:text-3xl">
                 Top Up {game.name} Murah
               </h1>
-              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-400">
+              <p className="mt-2 max-w-2xl text-sm leading-relaxed text-fg-muted">
                 {game.short_description ??
                   `Isi ulang ${game.name} dengan harga distributor, proses otomatis, dan tanpa perlu login akun.`}
               </p>
               <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink-850 px-2.5 py-1.5 text-ink-300">
-                  <Zap className="h-3.5 w-3.5 text-flame-500" aria-hidden /> Proses otomatis
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface-2 px-2.5 py-1.5 text-fg-body">
+                  <Zap className="h-3.5 w-3.5 text-brand" aria-hidden /> Proses otomatis
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink-850 px-2.5 py-1.5 text-ink-300">
-                  <ShieldCheck className="h-3.5 w-3.5 text-mint-500" aria-hidden /> Tanpa login akun
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface-2 px-2.5 py-1.5 text-fg-body">
+                  <ShieldCheck className="h-3.5 w-3.5 text-success" aria-hidden /> Tanpa login akun
                 </span>
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-ink-850 px-2.5 py-1.5 text-ink-300">
-                  <Clock3 className="h-3.5 w-3.5 text-flame-500" aria-hidden /> Buka 24 jam
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-surface-2 px-2.5 py-1.5 text-fg-body">
+                  <Clock3 className="h-3.5 w-3.5 text-brand" aria-hidden /> Buka 24 jam
                 </span>
                 {cheapest > 0 && (
-                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-flame-500/10 px-2.5 py-1.5 font-semibold text-flame-400">
+                  <span className="inline-flex items-center gap-1.5 rounded-lg bg-brand-soft px-2.5 py-1.5 font-semibold text-brand-strong">
                     Mulai {formatRupiah(cheapest)}
                   </span>
                 )}
@@ -150,11 +150,11 @@ export default async function GamePage({ params }: Props) {
         <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
           {howTo.length > 0 && (
             <section className="card-surface p-5">
-              <h2 className="text-sm font-bold text-ink-100">Cara Top Up {game.name}</h2>
+              <h2 className="text-sm font-bold text-fg">Cara Top Up {game.name}</h2>
               <ol className="mt-3 space-y-2.5">
                 {howTo.map((step, index) => (
-                  <li key={index} className="flex gap-2.5 text-sm text-ink-400">
-                    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-ink-800 text-[11px] font-bold text-flame-400">
+                  <li key={index} className="flex gap-2.5 text-sm text-fg-muted">
+                    <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-surface-3 text-[11px] font-bold text-brand-strong">
                       {index + 1}
                     </span>
                     <span className="leading-relaxed">{step}</span>
@@ -165,8 +165,8 @@ export default async function GamePage({ params }: Props) {
           )}
 
           <section className="card-surface p-5">
-            <h2 className="text-sm font-bold text-ink-100">Garansi Kami</h2>
-            <ul className="mt-3 space-y-2.5 text-sm text-ink-400">
+            <h2 className="text-sm font-bold text-fg">Garansi Kami</h2>
+            <ul className="mt-3 space-y-2.5 text-sm text-fg-muted">
               <li>Pesanan gagal → dana kembali penuh tanpa potongan.</li>
               <li>Kami tidak pernah meminta password, email, atau OTP akun game kamu.</li>
               <li>Setiap transaksi punya kode invoice yang bisa dilacak sendiri.</li>
@@ -177,12 +177,12 @@ export default async function GamePage({ params }: Props) {
       </div>
 
       {/* ============================================================ SEO TEKS */}
-      <section className="border-t border-ink-800 bg-ink-900">
+      <section className="border-t border-line bg-surface">
         <div className="mx-auto max-w-3xl px-4 py-12">
-          <h2 className="text-lg font-extrabold text-ink-100">
+          <h2 className="text-lg font-extrabold text-fg">
             Beli Diamond {game.name} Murah di Pontianak
           </h2>
-          <div className="mt-4 space-y-4 text-sm leading-relaxed text-ink-400">
+          <div className="mt-4 space-y-4 text-sm leading-relaxed text-fg-muted">
             <p>
               {game.name} adalah salah satu game yang paling banyak di-top up pelanggan{' '}
               {site.name}. Di halaman ini tersedia {products.length} pilihan nominal
@@ -203,14 +203,14 @@ export default async function GamePage({ params }: Props) {
             </p>
           </div>
 
-          <div className="mt-8 rounded-xl border border-ink-800 bg-ink-850 p-5">
-            <h3 className="text-sm font-bold text-ink-100">Belum menemukan game yang kamu cari?</h3>
-            <p className="mt-1.5 text-sm text-ink-400">
+          <div className="mt-8 rounded-xl border border-line bg-surface-2 p-5">
+            <h3 className="text-sm font-bold text-fg">Belum menemukan game yang kamu cari?</h3>
+            <p className="mt-1.5 text-sm text-fg-muted">
               Lihat seluruh katalog kami atau minta admin menambahkan game baru.
             </p>
             <Link
               href="/games"
-              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-flame-500 px-4 py-2.5 text-sm font-bold text-white hover:bg-flame-600"
+              className="mt-4 inline-flex items-center gap-2 rounded-lg bg-brand-strong px-4 py-2.5 text-sm font-bold text-white hover:bg-brand-hover"
             >
               Lihat Semua Game
             </Link>

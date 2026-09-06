@@ -33,7 +33,7 @@ export function GameBrowser({
     <div>
       <div className="relative mb-6">
         <Search
-          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-ink-500"
+          className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-fg-faint"
           aria-hidden
         />
         <input
@@ -42,17 +42,17 @@ export function GameBrowser({
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Cari game… misal: Mobile Legends, Free Fire, PUBG"
           aria-label="Cari game"
-          className="w-full rounded-xl border border-ink-700 bg-ink-900 py-3.5 pl-12 pr-4 text-sm text-ink-100 placeholder:text-ink-500 focus:border-flame-500 focus:outline-none"
+          className="w-full rounded-xl border border-line bg-surface py-3.5 pl-12 pr-4 text-sm text-fg placeholder:text-fg-faint focus:border-brand-strong focus:outline-none"
         />
       </div>
 
       {filtered.length === 0 ? (
         <div className="card-surface flex flex-col items-center gap-3 px-6 py-14 text-center">
-          <SearchX className="h-8 w-8 text-ink-600" aria-hidden />
-          <p className="text-sm font-semibold text-ink-200">
+          <SearchX className="h-8 w-8 text-fg-faint" aria-hidden />
+          <p className="text-sm font-semibold text-fg">
             Game &ldquo;{query}&rdquo; belum tersedia
           </p>
-          <p className="max-w-sm text-xs text-ink-500">
+          <p className="max-w-sm text-xs text-fg-faint">
             Hubungi admin lewat WhatsApp — kami bisa menambahkannya kalau produknya tersedia
             di jaringan distributor kami.
           </p>

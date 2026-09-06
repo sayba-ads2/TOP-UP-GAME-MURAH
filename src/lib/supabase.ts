@@ -11,7 +11,7 @@ export function supabaseAdmin(): SupabaseClient {
   if (!adminClient) {
     adminClient = createClient(serverEnv.supabaseUrl, serverEnv.supabaseServiceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
-      global: { headers: { 'X-Client-Info': 'topupgamemurah-server' } },
+      global: { headers: { 'X-Client-Info': 'saybavoucher-server' } },
     });
   }
   return adminClient;

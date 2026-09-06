@@ -4,7 +4,7 @@ import { site } from '@/lib/site';
 export const metadata: Metadata = {
   title: 'Kebijakan Privasi',
   description:
-    'Kebijakan privasi Top Up Game Murah: data apa yang kami kumpulkan, untuk apa dipakai, berapa lama disimpan, dan hak kamu atas data tersebut.',
+    'Kebijakan privasi Sayba Voucher: data apa yang kami kumpulkan, untuk apa dipakai, berapa lama disimpan, dan hak kamu atas data tersebut.',
   alternates: { canonical: '/kebijakan-privasi' },
 };
 
@@ -74,14 +74,14 @@ const SECTIONS = [
 export default function KebijakanPrivasiPage() {
   return (
     <article className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-2xl font-extrabold text-ink-100">Kebijakan Privasi</h1>
-      <p className="mt-2 text-xs text-ink-500">Terakhir diperbarui: 5 September 2026</p>
+      <h1 className="text-2xl font-extrabold text-fg">Kebijakan Privasi</h1>
+      <p className="mt-2 text-xs text-fg-faint">Terakhir diperbarui: 5 September 2026</p>
 
       <div className="mt-8 space-y-7">
         {SECTIONS.map((section) => (
           <section key={section.title}>
-            <h2 className="text-base font-bold text-ink-100">{section.title}</h2>
-            <ul className="mt-2.5 space-y-2 text-sm leading-relaxed text-ink-400">
+            <h2 className="text-base font-bold text-fg">{section.title}</h2>
+            <ul className="mt-2.5 space-y-2 text-sm leading-relaxed text-fg-muted">
               {section.body.map((paragraph, index) => (
                 <li key={index}>{paragraph}</li>
               ))}

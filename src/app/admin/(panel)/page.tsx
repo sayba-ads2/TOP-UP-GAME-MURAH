@@ -63,8 +63,8 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((card) => (
           <div key={card.label} className="card-surface p-4">
-            <span className="text-xs text-ink-500">{card.label}</span>
-            <p className="mt-1.5 text-xl font-extrabold text-ink-100">{card.value}</p>
+            <span className="text-xs text-fg-faint">{card.label}</span>
+            <p className="mt-1.5 text-xl font-extrabold text-fg">{card.value}</p>
           </div>
         ))}
       </div>
@@ -72,16 +72,16 @@ export default async function AdminDashboardPage() {
       <SyncPanel />
 
       <section className="card-surface overflow-hidden">
-        <div className="flex items-center justify-between border-b border-ink-800 px-4 py-3">
-          <h2 className="text-sm font-bold text-ink-100">Pesanan Terbaru</h2>
-          <Link href="/admin/orders" className="text-xs font-semibold text-flame-400 hover:underline">
+        <div className="flex items-center justify-between border-b border-line px-4 py-3">
+          <h2 className="text-sm font-bold text-fg">Pesanan Terbaru</h2>
+          <Link href="/admin/orders" className="text-xs font-semibold text-brand-strong hover:underline">
             Lihat semua
           </Link>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-ink-850 text-[11px] uppercase tracking-wider text-ink-500">
+            <thead className="bg-surface-2 text-[11px] uppercase tracking-wider text-fg-faint">
               <tr>
                 <th className="px-4 py-2.5 font-semibold">Invoice</th>
                 <th className="px-4 py-2.5 font-semibold">Produk</th>
@@ -91,33 +91,33 @@ export default async function AdminDashboardPage() {
                 <th className="px-4 py-2.5 font-semibold">Waktu</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-ink-800">
+            <tbody className="divide-y divide-line">
               {stats.recent.map((order) => (
-                <tr key={order.id} className="hover:bg-ink-850/60">
+                <tr key={order.id} className="hover:bg-surface-2/60">
                   <td className="px-4 py-3">
                     <Link
                       href={`/invoice/${order.order_code}`}
-                      className="font-mono text-xs text-flame-400 hover:underline"
+                      className="font-mono text-xs text-brand-strong hover:underline"
                     >
                       {order.order_code}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-ink-300">{order.product_name}</td>
-                  <td className="px-4 py-3 font-mono text-xs text-ink-400">{order.target}</td>
-                  <td className="px-4 py-3 font-semibold text-ink-200">
+                  <td className="px-4 py-3 text-fg-body">{order.product_name}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-fg-muted">{order.target}</td>
+                  <td className="px-4 py-3 font-semibold text-fg">
                     {formatRupiah(order.total_amount)}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={order.fulfillment_status} />
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-xs text-ink-500">
+                  <td className="whitespace-nowrap px-4 py-3 text-xs text-fg-faint">
                     {formatDateTime(order.created_at)}
                   </td>
                 </tr>
               ))}
               {stats.recent.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-ink-500">
+                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-fg-faint">
                     Belum ada pesanan.
                   </td>
                 </tr>

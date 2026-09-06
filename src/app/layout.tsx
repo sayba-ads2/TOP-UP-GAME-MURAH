@@ -63,10 +63,10 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#0a0a0b',
+  themeColor: '#ffffff',
   width: 'device-width',
   initialScale: 1,
-  colorScheme: 'dark',
+  colorScheme: 'light',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -82,7 +82,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen antialiased">
         <a
           href="#konten"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-flame-500 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-brand-strong focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white"
         >
           Lompat ke konten utama
         </a>

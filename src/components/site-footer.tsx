@@ -7,94 +7,113 @@ import type { Game } from '@/types';
 
 export function SiteFooter({ games, whatsapp }: { games: Game[]; whatsapp: string }) {
   const year = new Date().getFullYear();
+  const vouchers = games.filter((g) => g.kind === 'voucher').slice(0, 6);
+  const topups = games.filter((g) => g.kind !== 'voucher').slice(0, 6);
 
   return (
-    <footer className="mt-20 border-t border-ink-800 bg-ink-900">
+    <footer className="mt-16 border-t border-line bg-surface">
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-10 md:grid-cols-12">
           <div className="md:col-span-4">
             <Logo />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-400">
-              Layanan top up diamond dan voucher game resmi asal {site.address.city},{' '}
-              {site.address.region}. Proses otomatis, harga transparan, tanpa perlu login akun
-              game.
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-fg-muted">
+              Toko voucher digital dan top up game asal {site.address.city},{' '}
+              {site.address.region}. Proses otomatis, harga transparan, tanpa perlu akses akun.
             </p>
-            <div className="mt-5 flex items-center gap-2 rounded-lg border border-ink-800 bg-ink-850 px-3 py-2 text-xs text-mint-400">
+            <div className="mt-5 inline-flex items-center gap-2 rounded-lg border border-line bg-success-soft px-3 py-2 text-xs font-medium text-success">
               <ShieldCheck className="h-4 w-4" aria-hidden />
-              Transaksi lewat distributor berlisensi
+              Distributor berlisensi
             </div>
           </div>
 
           <div className="md:col-span-3">
-            <h2 className="text-sm font-bold text-ink-100">Game Populer</h2>
+            <h2 className="text-sm font-semibold text-fg">Voucher</h2>
             <ul className="mt-4 space-y-2.5 text-sm">
-              {games.slice(0, 8).map((game) => (
+              {vouchers.map((game) => (
                 <li key={game.id}>
-                  <Link href={`/${game.slug}`} className="text-ink-400 transition-colors hover:text-flame-400">
-                    Top Up {game.name}
+                  <Link href={`/${game.slug}`} className="text-fg-muted transition-colors hover:text-brand-strong">
+                    {game.name}
                   </Link>
                 </li>
               ))}
-              {games.length === 0 && <li className="text-ink-500">Segera hadir</li>}
+              {vouchers.length === 0 && <li className="text-fg-faint">Segera hadir</li>}
+              <li>
+                <Link href="/voucher" className="font-medium text-brand-strong hover:underline">
+                  Lihat semua voucher
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div className="md:col-span-2">
-            <h2 className="text-sm font-bold text-ink-100">Informasi</h2>
+            <h2 className="text-sm font-semibold text-fg">Top Up Game</h2>
             <ul className="mt-4 space-y-2.5 text-sm">
-              <li><Link href="/games" className="text-ink-400 hover:text-flame-400">Semua Game</Link></li>
-              <li><Link href="/cek-pesanan" className="text-ink-400 hover:text-flame-400">Cek Pesanan</Link></li>
-              <li><Link href="/cara-order" className="text-ink-400 hover:text-flame-400">Cara Order</Link></li>
-              <li><Link href="/tentang-kami" className="text-ink-400 hover:text-flame-400">Tentang Kami</Link></li>
-              <li><Link href="/kontak" className="text-ink-400 hover:text-flame-400">Kontak</Link></li>
-              <li><Link href="/syarat-ketentuan" className="text-ink-400 hover:text-flame-400">Syarat & Ketentuan</Link></li>
-              <li><Link href="/kebijakan-privasi" className="text-ink-400 hover:text-flame-400">Kebijakan Privasi</Link></li>
+              {topups.map((game) => (
+                <li key={game.id}>
+                  <Link href={`/${game.slug}`} className="text-fg-muted transition-colors hover:text-brand-strong">
+                    {game.name}
+                  </Link>
+                </li>
+              ))}
+              {topups.length === 0 && <li className="text-fg-faint">Segera hadir</li>}
+              <li>
+                <Link href="/games" className="font-medium text-brand-strong hover:underline">
+                  Semua game
+                </Link>
+              </li>
             </ul>
           </div>
 
           <div className="md:col-span-3">
-            <h2 className="text-sm font-bold text-ink-100">Hubungi Kami</h2>
-            <ul className="mt-4 space-y-3 text-sm text-ink-400">
+            <h2 className="text-sm font-semibold text-fg">Bantuan</h2>
+            <ul className="mt-4 space-y-3 text-sm text-fg-muted">
               <li className="flex gap-2.5">
-                <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-flame-500" aria-hidden />
-                <a href={waLink(whatsapp)} target="_blank" rel="noopener noreferrer" className="hover:text-flame-400">
+                <MessageCircle className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                <a href={waLink(whatsapp)} target="_blank" rel="noopener noreferrer" className="hover:text-brand-strong">
                   WhatsApp Admin
                 </a>
               </li>
               <li className="flex gap-2.5">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-flame-500" aria-hidden />
-                <a href={`mailto:${site.contact.email}`} className="hover:text-flame-400">
+                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
+                <a href={`mailto:${site.contact.email}`} className="hover:text-brand-strong">
                   {site.contact.email}
                 </a>
               </li>
               <li className="flex gap-2.5">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-flame-500" aria-hidden />
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
                 <span>{site.address.city}, {site.address.region}</span>
               </li>
               <li className="flex gap-2.5">
-                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-flame-500" aria-hidden />
+                <Clock className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
                 <span>{site.contact.hours}</span>
               </li>
+            </ul>
+
+            <ul className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+              <li><Link href="/tentang-kami" className="text-fg-muted hover:text-brand-strong">Tentang</Link></li>
+              <li><Link href="/kontak" className="text-fg-muted hover:text-brand-strong">Kontak</Link></li>
+              <li><Link href="/syarat-ketentuan" className="text-fg-muted hover:text-brand-strong">S&amp;K</Link></li>
+              <li><Link href="/kebijakan-privasi" className="text-fg-muted hover:text-brand-strong">Privasi</Link></li>
             </ul>
           </div>
         </div>
 
         {/* Blok kata kunci lokal — membantu relevansi pencarian area Kalbar */}
-        <div className="mt-10 border-t border-ink-800 pt-6">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-ink-500">
-            Wilayah Layanan
+        <div className="mt-10 border-t border-line pt-6">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-fg-faint">
+            Wilayah layanan
           </h2>
-          <p className="mt-2 text-xs leading-relaxed text-ink-500">
-            Melayani top up game untuk pelanggan di {site.serviceAreas.join(', ')}, dan seluruh
-            Indonesia. Semua transaksi diproses online 24 jam.
+          <p className="mt-2 text-xs leading-relaxed text-fg-faint">
+            Melayani pembeli voucher dan top up game di {site.serviceAreas.join(', ')}, serta
+            seluruh Indonesia. Semua transaksi diproses online 24 jam.
           </p>
         </div>
 
-        <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-ink-800 pt-6 text-xs text-ink-500 sm:flex-row">
+        <div className="mt-8 flex flex-col items-center justify-between gap-3 border-t border-line pt-6 text-xs text-fg-faint sm:flex-row">
           <p>© {year} {site.name}. Bagian dari Sayba Arc.</p>
-          <p>
-            Semua merek dagang game adalah milik pemegang hak masing-masing dan tidak
-            berafiliasi dengan situs ini.
+          <p className="text-center sm:text-right">
+            Semua merek dagang adalah milik pemegang hak masing-masing dan tidak berafiliasi
+            dengan situs ini.
           </p>
         </div>
       </div>

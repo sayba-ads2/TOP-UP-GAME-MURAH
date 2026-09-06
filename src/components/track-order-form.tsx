@@ -37,7 +37,7 @@ export function TrackOrderForm() {
 
   return (
     <form onSubmit={handleSubmit} className="card-surface p-5">
-      <label htmlFor="invoice" className="mb-1.5 block text-xs font-semibold text-ink-300">
+      <label htmlFor="invoice" className="mb-1.5 block text-xs font-semibold text-fg-body">
         Kode Invoice
       </label>
       <input
@@ -46,11 +46,11 @@ export function TrackOrderForm() {
         onChange={(e) => setCode(e.target.value)}
         placeholder="TGM-260905-K7QX4M"
         autoComplete="off"
-        className="w-full rounded-lg border border-ink-700 bg-ink-850 px-3.5 py-3 font-mono text-sm uppercase text-ink-100 placeholder:font-sans placeholder:normal-case placeholder:text-ink-600 focus:border-flame-500 focus:outline-none"
+        className="w-full rounded-lg border border-line bg-surface-2 px-3.5 py-3 font-mono text-sm uppercase text-fg placeholder:font-sans placeholder:normal-case placeholder:text-fg-faint focus:border-brand-strong focus:outline-none"
       />
 
       {error && (
-        <p className="mt-3 flex items-start gap-2 rounded-lg bg-red-500/10 px-3 py-2.5 text-xs font-medium text-red-400">
+        <p className="mt-3 flex items-start gap-2 rounded-lg bg-danger-soft px-3 py-2.5 text-xs font-medium text-danger">
           <AlertCircle className="mt-px h-4 w-4 shrink-0" aria-hidden />
           {error}
         </p>
@@ -59,7 +59,7 @@ export function TrackOrderForm() {
       <button
         type="submit"
         disabled={loading}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-flame-500 py-3.5 text-sm font-bold text-white transition-colors hover:bg-flame-600 disabled:opacity-60"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-brand-strong py-3.5 text-sm font-bold text-white transition-colors hover:bg-brand-hover disabled:opacity-60"
       >
         {loading ? (
           <Loader2 className="h-4 w-4 animate-spin" aria-hidden />

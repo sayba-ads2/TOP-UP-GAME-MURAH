@@ -1,41 +1,51 @@
 @import 'tailwindcss';
 
 /* ==========================================================================
-   TOP UP GAME MURAH — Design tokens
-   Palet mengikuti identitas Sayba Arc: dasar gelap arang + aksen oranye.
+   SAYBA VOUCHER — Design tokens
+   Tema terang, minimalis, profesional. Netral hangat sebagai dasar, oranye
+   Sayba dipakai hemat hanya untuk aksi utama dan aksen.
    ========================================================================== */
 
 @theme {
-  --color-ink-950: #0a0a0b;
-  --color-ink-900: #101012;
-  --color-ink-850: #16161a;
-  --color-ink-800: #1c1c21;
-  --color-ink-700: #26262d;
-  --color-ink-600: #3a3a44;
-  --color-ink-500: #5c5c68;
-  --color-ink-400: #8b8b98;
-  --color-ink-300: #b8b8c2;
-  --color-ink-100: #ededf0;
+  /* --- Permukaan --------------------------------------------------------- */
+  --color-canvas: #f8f8f7;      /* latar halaman */
+  --color-surface: #ffffff;     /* kartu */
+  --color-surface-2: #f4f4f5;   /* blok redup di dalam kartu */
+  --color-surface-3: #ebebed;   /* pembeda paling kuat */
 
-  --color-flame-50: #fff5ed;
-  --color-flame-100: #ffe8d4;
-  --color-flame-300: #fdb97a;
-  --color-flame-400: #fb9a48;
-  --color-flame-500: #f47c20;
-  --color-flame-600: #e2620f;
-  --color-flame-700: #bb4a0f;
+  /* --- Garis ------------------------------------------------------------- */
+  --color-line: #e6e6e9;
+  --color-line-strong: #d3d3d8;
 
-  --color-mint-400: #34d399;
-  --color-mint-500: #10b981;
+  /* --- Teks (semua lolos kontras WCAG AA di atas surface putih) ---------- */
+  --color-fg: #18181b;          /* judul            15.9:1 */
+  --color-fg-body: #3f3f46;     /* isi              10.4:1 */
+  --color-fg-muted: #62626b;    /* pendukung         6.4:1 */
+  --color-fg-faint: #8a8a93;    /* label kecil       3.6:1 — dekoratif saja */
+
+  /* --- Merek ------------------------------------------------------------- */
+  --color-brand: #f97316;         /* aksen & ikon (dekoratif) */
+  --color-brand-strong: #c2410c;  /* tombol utama & teks  5.2:1 di atas putih */
+  --color-brand-hover: #9a3412;
+  --color-brand-soft: #fff5ed;    /* latar sangat tipis */
+  --color-brand-border: #fdd0ab;
+
+  /* --- Status ------------------------------------------------------------ */
+  --color-success: #15803d;
+  --color-success-soft: #f0fdf4;
+  --color-warning: #b45309;
+  --color-warning-soft: #fffbeb;
+  --color-danger: #b91c1c;
+  --color-danger-soft: #fef2f2;
 
   --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, -apple-system,
     'Segoe UI', Roboto, sans-serif;
 
-  --radius-card: 1rem;
+  --radius-card: 0.875rem;
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html {
@@ -44,51 +54,55 @@ html {
 }
 
 body {
-  background-color: var(--color-ink-950);
-  color: var(--color-ink-100);
+  background-color: var(--color-canvas);
+  color: var(--color-fg-body);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
 
-/* Latar bercahaya lembut di balik hero */
-.aurora {
-  background-image:
-    radial-gradient(60rem 30rem at 15% -10%, rgba(244, 124, 32, 0.16), transparent 60%),
-    radial-gradient(50rem 26rem at 90% 0%, rgba(244, 124, 32, 0.09), transparent 60%);
-}
-
+/* Kartu: rata, tanpa bayangan berat — bayangan hanya muncul saat disentuh. */
 .card-surface {
-  background-color: var(--color-ink-900);
-  border: 1px solid var(--color-ink-800);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
   border-radius: var(--radius-card);
 }
 
 .card-surface-hover {
-  transition: border-color 160ms ease, transform 160ms ease, background-color 160ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
 }
 .card-surface-hover:hover {
-  border-color: var(--color-flame-600);
-  transform: translateY(-2px);
+  border-color: var(--color-line-strong);
+  box-shadow: 0 1px 2px rgb(24 24 27 / 0.04), 0 8px 24px -12px rgb(24 24 27 / 0.12);
+  transform: translateY(-1px);
+}
+
+/* Latar hangat yang sangat tipis di balik hero */
+.aurora {
+  background-image:
+    radial-gradient(48rem 24rem at 12% -20%, rgb(249 115 22 / 0.07), transparent 62%),
+    radial-gradient(40rem 20rem at 92% -10%, rgb(249 115 22 / 0.045), transparent 60%);
 }
 
 /* Fokus keyboard yang selalu terlihat — penting untuk aksesibilitas */
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
-  outline: 2px solid var(--color-flame-500);
+  outline: 2px solid var(--color-brand-strong);
   outline-offset: 2px;
   border-radius: 0.5rem;
 }
 
 ::selection {
-  background-color: var(--color-flame-500);
+  background-color: var(--color-brand);
   color: #fff;
 }
 
-/* Scrollbar tipis di desktop */
 @media (pointer: fine) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-ink-700) transparent;
+    scrollbar-color: var(--color-line-strong) transparent;
   }
 }
 
@@ -100,28 +114,41 @@ body {
   scrollbar-width: none;
 }
 
-/* Sembunyikan spinner pada input angka */
+/* Rel carousel: geser dengan snap, tanpa pustaka tambahan. */
+.snap-rail {
+  display: flex;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.snap-rail::-webkit-scrollbar {
+  display: none;
+}
+.snap-rail > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
 input[type='number']::-webkit-inner-spin-button,
 input[type='number']::-webkit-outer-spin-button {
   appearance: none;
   margin: 0;
 }
 
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
-.animate-marquee {
-  animation: marquee 30s linear infinite;
-}
-
 @keyframes pulse-ring {
-  0%   { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.45); }
-  70%  { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  0% {
+    box-shadow: 0 0 0 0 rgb(21 128 61 / 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgb(21 128 61 / 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgb(21 128 61 / 0);
+  }
 }
 .animate-pulse-ring {
-  animation: pulse-ring 2s infinite;
+  animation: pulse-ring 2.4s infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -132,5 +159,8 @@ input[type='number']::-webkit-outer-spin-button {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+  .snap-rail {
+    scroll-behavior: auto;
   }
 }

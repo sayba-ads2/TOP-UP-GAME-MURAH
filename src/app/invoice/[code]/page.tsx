@@ -66,13 +66,13 @@ export default async function InvoicePage({ params }: Props) {
     <div className="mx-auto max-w-3xl px-4 py-8">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-extrabold text-ink-100">Detail Pesanan</h1>
-          <p className="mt-1 text-xs text-ink-500">
+          <h1 className="text-xl font-extrabold text-fg">Detail Pesanan</h1>
+          <p className="mt-1 text-xs text-fg-faint">
             Dibuat {formatDateTime(order.created_at)} WIB
           </p>
         </div>
-        <div className="flex items-center gap-2 rounded-lg border border-ink-700 bg-ink-900 px-3 py-2">
-          <span className="font-mono text-sm font-bold text-flame-400">{order.order_code}</span>
+        <div className="flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2">
+          <span className="font-mono text-sm font-bold text-brand-strong">{order.order_code}</span>
           <CopyButton value={order.order_code} label="Salin" />
         </div>
       </div>
@@ -83,20 +83,20 @@ export default async function InvoicePage({ params }: Props) {
         {/* ------------------------------------------------------ pembayaran */}
         {showPaymentBox && method && (
           <section className="card-surface p-5">
-            <h2 className="text-sm font-bold text-ink-100">Selesaikan Pembayaran</h2>
+            <h2 className="text-sm font-bold text-fg">Selesaikan Pembayaran</h2>
 
-            <div className="mt-4 rounded-lg border border-flame-600/40 bg-flame-500/5 p-4">
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-400">
+            <div className="mt-4 rounded-lg border border-brand-border/40 bg-brand-strong/5 p-4">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-fg-muted">
                 Total yang harus dibayar
               </span>
               <div className="mt-1 flex flex-wrap items-center gap-3">
-                <span className="text-2xl font-extrabold text-flame-400">
+                <span className="text-2xl font-extrabold text-brand-strong">
                   {formatRupiah(order.total_amount)}
                 </span>
                 <CopyButton value={String(order.total_amount)} label="Salin nominal" />
               </div>
               {order.unique_code > 0 && (
-                <p className="mt-2 flex items-start gap-1.5 text-xs text-amber-400">
+                <p className="mt-2 flex items-start gap-1.5 text-xs text-warning">
                   <AlertTriangle className="mt-px h-3.5 w-3.5 shrink-0" aria-hidden />
                   Transfer <strong>sama persis</strong> sampai 3 digit terakhir (
                   {order.unique_code}). Angka unik ini yang membuat pembayaranmu terdeteksi
@@ -107,14 +107,14 @@ export default async function InvoicePage({ params }: Props) {
 
             <dl className="mt-4 space-y-2.5 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-ink-500">Metode</dt>
-                <dd className="font-semibold text-ink-200">{method.name}</dd>
+                <dt className="text-fg-faint">Metode</dt>
+                <dd className="font-semibold text-fg">{method.name}</dd>
               </div>
               {method.account_number && (
                 <div className="flex items-center justify-between gap-4">
-                  <dt className="text-ink-500">Nomor Tujuan</dt>
+                  <dt className="text-fg-faint">Nomor Tujuan</dt>
                   <dd className="flex items-center gap-2">
-                    <span className="font-mono font-semibold text-ink-100">
+                    <span className="font-mono font-semibold text-fg">
                       {method.account_number}
                     </span>
                     <CopyButton value={method.account_number} label="Salin" />
@@ -123,14 +123,14 @@ export default async function InvoicePage({ params }: Props) {
               )}
               {method.account_name && (
                 <div className="flex justify-between gap-4">
-                  <dt className="text-ink-500">Atas Nama</dt>
-                  <dd className="font-semibold text-ink-200">{method.account_name}</dd>
+                  <dt className="text-fg-faint">Atas Nama</dt>
+                  <dd className="font-semibold text-fg">{method.account_name}</dd>
                 </div>
               )}
               {order.expires_at && (
                 <div className="flex justify-between gap-4">
-                  <dt className="text-ink-500">Bayar Sebelum</dt>
-                  <dd className="font-semibold text-amber-400">
+                  <dt className="text-fg-faint">Bayar Sebelum</dt>
+                  <dd className="font-semibold text-warning">
                     {formatDateTime(order.expires_at)} WIB
                   </dd>
                 </div>
@@ -151,13 +151,13 @@ export default async function InvoicePage({ params }: Props) {
 
             {instructions.length > 0 && (
               <>
-                <h3 className="mt-5 text-xs font-bold uppercase tracking-wider text-ink-500">
+                <h3 className="mt-5 text-xs font-bold uppercase tracking-wider text-fg-faint">
                   Cara Membayar
                 </h3>
                 <ol className="mt-2.5 space-y-2">
                   {instructions.map((step, index) => (
-                    <li key={index} className="flex gap-2.5 text-sm text-ink-400">
-                      <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-ink-800 text-[11px] font-bold text-flame-400">
+                    <li key={index} className="flex gap-2.5 text-sm text-fg-muted">
+                      <span className="grid h-5 w-5 shrink-0 place-items-center rounded-md bg-surface-3 text-[11px] font-bold text-brand-strong">
                         {index + 1}
                       </span>
                       <span className="leading-relaxed">{step}</span>
@@ -174,7 +174,7 @@ export default async function InvoicePage({ params }: Props) {
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-mint-500 py-3 text-sm font-bold text-white transition-colors hover:bg-mint-500/90"
+              className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-success py-3 text-sm font-bold text-white transition-colors hover:bg-success/90"
             >
               <MessageCircle className="h-4 w-4" aria-hidden />
               Konfirmasi Pembayaran ke Admin
@@ -184,13 +184,13 @@ export default async function InvoicePage({ params }: Props) {
 
         {/* --------------------------------------------------------- rincian */}
         <section className="card-surface p-5">
-          <h2 className="text-sm font-bold text-ink-100">Rincian Pesanan</h2>
+          <h2 className="text-sm font-bold text-fg">Rincian Pesanan</h2>
           <dl className="mt-4 space-y-2.5 text-sm">
             <div className="flex justify-between gap-4">
-              <dt className="text-ink-500">Game</dt>
-              <dd className="text-right font-semibold text-ink-200">
+              <dt className="text-fg-faint">Game</dt>
+              <dd className="text-right font-semibold text-fg">
                 {order.game_slug ? (
-                  <Link href={`/${order.game_slug}`} className="hover:text-flame-400">
+                  <Link href={`/${order.game_slug}`} className="hover:text-brand-strong">
                     {order.game_name}
                   </Link>
                 ) : (
@@ -199,51 +199,51 @@ export default async function InvoicePage({ params }: Props) {
               </dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-ink-500">Produk</dt>
-              <dd className="text-right font-semibold text-ink-200">{order.product_name}</dd>
+              <dt className="text-fg-faint">Produk</dt>
+              <dd className="text-right font-semibold text-fg">{order.product_name}</dd>
             </div>
             <div className="flex justify-between gap-4">
-              <dt className="text-ink-500">User ID</dt>
-              <dd className="text-right font-mono font-semibold text-ink-200">
+              <dt className="text-fg-faint">User ID</dt>
+              <dd className="text-right font-mono font-semibold text-fg">
                 {order.target}
                 {order.server_id ? ` (${order.server_id})` : ''}
               </dd>
             </div>
             {order.nickname && (
               <div className="flex justify-between gap-4">
-                <dt className="text-ink-500">Nickname</dt>
-                <dd className="text-right font-semibold text-mint-400">{order.nickname}</dd>
+                <dt className="text-fg-faint">Nickname</dt>
+                <dd className="text-right font-semibold text-success">{order.nickname}</dd>
               </div>
             )}
-            <div className="flex justify-between gap-4 border-t border-ink-800 pt-2.5">
-              <dt className="text-ink-500">Harga Produk</dt>
-              <dd className="font-semibold text-ink-200">{formatRupiah(order.base_amount)}</dd>
+            <div className="flex justify-between gap-4 border-t border-line pt-2.5">
+              <dt className="text-fg-faint">Harga Produk</dt>
+              <dd className="font-semibold text-fg">{formatRupiah(order.base_amount)}</dd>
             </div>
             {order.fee_amount > 0 && (
               <div className="flex justify-between gap-4">
-                <dt className="text-ink-500">Biaya Pembayaran</dt>
-                <dd className="font-semibold text-ink-200">{formatRupiah(order.fee_amount)}</dd>
+                <dt className="text-fg-faint">Biaya Pembayaran</dt>
+                <dd className="font-semibold text-fg">{formatRupiah(order.fee_amount)}</dd>
               </div>
             )}
             {order.unique_code > 0 && (
               <div className="flex justify-between gap-4">
-                <dt className="text-ink-500">Kode Unik</dt>
-                <dd className="font-semibold text-ink-200">{formatRupiah(order.unique_code)}</dd>
+                <dt className="text-fg-faint">Kode Unik</dt>
+                <dd className="font-semibold text-fg">{formatRupiah(order.unique_code)}</dd>
               </div>
             )}
-            <div className="flex justify-between gap-4 border-t border-ink-800 pt-2.5">
-              <dt className="font-semibold text-ink-200">Total</dt>
-              <dd className="text-lg font-extrabold text-flame-400">
+            <div className="flex justify-between gap-4 border-t border-line pt-2.5">
+              <dt className="font-semibold text-fg">Total</dt>
+              <dd className="text-lg font-extrabold text-brand-strong">
                 {formatRupiah(order.total_amount)}
               </dd>
             </div>
           </dl>
         </section>
 
-        <p className="text-center text-xs text-ink-500">
-          Simpan kode <span className="font-mono text-ink-300">{order.order_code}</span> untuk
+        <p className="text-center text-xs text-fg-faint">
+          Simpan kode <span className="font-mono text-fg-body">{order.order_code}</span> untuk
           melacak pesanan ini kapan saja di halaman{' '}
-          <Link href="/cek-pesanan" className="text-flame-400 underline">
+          <Link href="/cek-pesanan" className="text-brand-strong underline">
             Cek Pesanan
           </Link>
           .

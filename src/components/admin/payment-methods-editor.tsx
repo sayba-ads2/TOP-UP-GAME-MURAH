@@ -19,8 +19,8 @@ type Method = {
 };
 
 const field =
-  'w-full rounded-lg border border-ink-700 bg-ink-900 px-3 py-2 text-sm text-ink-100 focus:border-flame-500 focus:outline-none';
-const label = 'mb-1 block text-[11px] font-semibold uppercase tracking-wider text-ink-500';
+  'w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm text-fg focus:border-brand-strong focus:outline-none';
+const label = 'mb-1 block text-[11px] font-semibold uppercase tracking-wider text-fg-faint';
 
 function MethodRow({ method }: { method: Method }) {
   const [pending, startTransition] = useTransition();
@@ -37,13 +37,13 @@ function MethodRow({ method }: { method: Method }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-ink-800 p-4">
+    <form onSubmit={handleSubmit} className="border-t border-line p-4">
       <div className="mb-3 flex flex-wrap items-center gap-3">
-        <span className="rounded-lg bg-ink-800 px-2.5 py-1 font-mono text-xs font-bold text-flame-400">
+        <span className="rounded-lg bg-surface-3 px-2.5 py-1 font-mono text-xs font-bold text-brand-strong">
           {method.code}
         </span>
-        <span className="text-xs text-ink-500">{method.group_name}</span>
-        <label className="ml-auto flex items-center gap-2 text-xs text-ink-300">
+        <span className="text-xs text-fg-faint">{method.group_name}</span>
+        <label className="ml-auto flex items-center gap-2 text-xs text-fg-body">
           <input type="checkbox" name="is_active" defaultChecked={method.is_active} />
           Aktif
         </label>
@@ -108,12 +108,12 @@ function MethodRow({ method }: { method: Method }) {
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-2 rounded-lg border border-ink-700 px-4 py-2 text-xs font-bold text-ink-200 hover:border-flame-500 hover:text-flame-400 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-lg border border-line px-4 py-2 text-xs font-bold text-fg hover:border-brand-strong hover:text-brand-strong disabled:opacity-60"
         >
           {pending && <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />}
           Simpan
         </button>
-        {message && <span className="text-xs text-ink-400">{message}</span>}
+        {message && <span className="text-xs text-fg-muted">{message}</span>}
       </div>
     </form>
   );
@@ -123,11 +123,11 @@ export function PaymentMethodsEditor({ methods }: { methods: Method[] }) {
   return (
     <section className="card-surface overflow-hidden">
       <div className="p-5 pb-0">
-        <h2 className="text-sm font-bold text-ink-100">Metode Pembayaran</h2>
-        <p className="mt-1 text-xs leading-relaxed text-ink-500">
+        <h2 className="text-sm font-bold text-fg">Metode Pembayaran</h2>
+        <p className="mt-1 text-xs leading-relaxed text-fg-faint">
           Isi nomor rekening / e-wallet dan unggah gambar QRIS statis kamu (misalnya ke Supabase
           Storage), lalu tempel URL-nya di sini. Metode berprovider{' '}
-          <code className="rounded bg-ink-850 px-1 text-flame-400">manual</code> perlu kamu
+          <code className="rounded bg-surface-2 px-1 text-brand-strong">manual</code> perlu kamu
           konfirmasi sendiri di halaman Pesanan setelah dana masuk.
         </p>
       </div>
@@ -137,7 +137,7 @@ export function PaymentMethodsEditor({ methods }: { methods: Method[] }) {
           <MethodRow key={method.id} method={method} />
         ))}
         {methods.length === 0 && (
-          <p className="px-5 py-10 text-center text-sm text-ink-500">
+          <p className="px-5 py-10 text-center text-sm text-fg-faint">
             Belum ada metode pembayaran. Jalankan 02_seed.sql di Supabase.
           </p>
         )}

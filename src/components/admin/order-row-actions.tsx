@@ -49,7 +49,7 @@ export function OrderRowActions({
 
   const isFinal = ['SUCCESS', 'REFUNDED'].includes(fulfillmentStatus);
   const button =
-    'rounded-lg border border-ink-700 px-2.5 py-1.5 text-[11px] font-bold text-ink-300 transition-colors hover:border-flame-500 hover:text-flame-400 disabled:opacity-50';
+    'rounded-lg border border-line px-2.5 py-1.5 text-[11px] font-bold text-fg-body transition-colors hover:border-brand-strong hover:text-brand-strong disabled:opacity-50';
 
   return (
     <div className="flex flex-col items-start gap-1.5">
@@ -60,7 +60,7 @@ export function OrderRowActions({
           onClick={() =>
             run('confirm', 'Pastikan dana sudah benar-benar masuk. Tandai pesanan ini lunas dan proses sekarang?')
           }
-          className="rounded-lg bg-mint-500 px-2.5 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-mint-500/90 disabled:opacity-50"
+          className="rounded-lg bg-success px-2.5 py-1.5 text-[11px] font-bold text-white transition-colors hover:bg-success/90 disabled:opacity-50"
         >
           {busy === 'confirm' ? <Loader2 className="h-3 w-3 animate-spin" aria-hidden /> : 'Tandai Lunas'}
         </button>
@@ -100,7 +100,7 @@ export function OrderRowActions({
         </button>
       )}
 
-      {error && <span className="text-[11px] text-red-400">{error}</span>}
+      {error && <span className="text-[11px] text-danger">{error}</span>}
     </div>
   );
 }

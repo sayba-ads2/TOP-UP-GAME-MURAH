@@ -13,11 +13,11 @@ export default function AdminLoginPage() {
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-sm flex-col justify-center px-4 py-12">
       <div className="text-center">
-        <span className="inline-grid h-14 w-14 place-items-center rounded-2xl bg-ink-850 ring-1 ring-ink-700">
+        <span className="inline-grid h-14 w-14 place-items-center rounded-2xl bg-surface-2 ring-1 ring-line">
           <LogoMark className="h-8 w-8" />
         </span>
-        <h1 className="mt-4 text-xl font-extrabold text-ink-100">Dashboard Admin</h1>
-        <p className="mt-1.5 text-sm text-ink-500">
+        <h1 className="mt-4 text-xl font-extrabold text-fg">Dashboard Admin</h1>
+        <p className="mt-1.5 text-sm text-fg-faint">
           Masuk memakai akun Supabase yang terdaftar di tabel admin_users.
         </p>
       </div>

@@ -1,45 +1,62 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Gamepad2 } from 'lucide-react';
-import { formatRupiah } from '@/lib/utils';
+import { Gamepad2, Ticket } from 'lucide-react';
+import { cn, formatRupiah } from '@/lib/utils';
 import type { Game } from '@/types';
 
-export function GameCard({ game, cheapest }: { game: Game; cheapest?: number }) {
+/**
+ * Kartu etalase.
+ *
+ * `variant="rail"` memberi lebar tetap agar bisa dipakai di dalam carousel;
+ * `variant="grid"` melebar mengikuti kolom grid.
+ */
+export function GameCard({
+  game,
+  cheapest,
+  variant = 'grid',
+}: {
+  game: Game;
+  cheapest?: number;
+  variant?: 'grid' | 'rail';
+}) {
+  const Placeholder = game.kind === 'voucher' ? Ticket : Gamepad2;
+  const label = game.kind === 'voucher' ? 'Beli voucher' : 'Top up';
+
   return (
     <Link
       href={`/${game.slug}`}
-      className="card-surface card-surface-hover group block overflow-hidden"
-      title={`Top up ${game.name} murah`}
+      className={cn(
+        'card-surface card-surface-hover group block overflow-hidden',
+        variant === 'rail' && 'w-36 sm:w-40',
+      )}
+      title={`${label} ${game.name}`}
     >
-      <div className="relative aspect-[3/4] overflow-hidden bg-ink-850">
+      <div className="relative aspect-[4/5] overflow-hidden bg-surface-2">
         {game.icon_url ? (
           <Image
             src={game.icon_url}
-            alt={`Ikon game ${game.name}`}
+            alt={`Ikon ${game.name}`}
             fill
-            sizes="(max-width: 640px) 45vw, (max-width: 1024px) 25vw, 200px"
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 45vw, 200px"
+            className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
         ) : (
-          <div className="grid h-full w-full place-items-center bg-linear-to-br from-ink-800 to-ink-850">
-            <Gamepad2 className="h-10 w-10 text-ink-600" aria-hidden />
+          <div className="grid h-full w-full place-items-center bg-linear-to-br from-surface-2 to-surface-3">
+            <Placeholder className="h-8 w-8 text-fg-faint" aria-hidden />
           </div>
-        )}
-        {game.is_featured && (
-          <span className="absolute left-2 top-2 rounded-md bg-flame-500 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-            Populer
-          </span>
         )}
       </div>
 
       <div className="p-3">
-        <h3 className="line-clamp-2 text-sm font-semibold leading-snug text-ink-100">
+        <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-fg">
           {game.name}
         </h3>
-        <p className="mt-1 truncate text-xs text-ink-500">{game.publisher ?? 'Voucher Game'}</p>
+        <p className="mt-0.5 truncate text-[11px] text-fg-faint">
+          {game.publisher ?? (game.kind === 'voucher' ? 'Voucher digital' : 'Top up game')}
+        </p>
         {cheapest ? (
-          <p className="mt-2 text-xs text-ink-400">
-            Mulai <span className="font-bold text-flame-400">{formatRupiah(cheapest)}</span>
+          <p className="mt-2 text-[11px] text-fg-muted">
+            Mulai <span className="font-bold text-brand-strong">{formatRupiah(cheapest)}</span>
           </p>
         ) : null}
       </div>

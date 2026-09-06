@@ -5,12 +5,42 @@ import { buildGameRow } from './game-presets';
 import { calculateSellPrice } from './pricing';
 import { getPricingConfig } from './queries';
 
-/** Hanya kategori game yang diambil — toko ini khusus top up game. */
-const GAME_CATEGORIES = ['topup game', 'top up game', 'game', 'voucher game'];
+/**
+ * Kategori katalog NexShop yang dianggap produk game.
+ *
+ * Katalog memakai "Gaming" untuk top up in-game dan "Voucher Game" untuk kode
+ * voucher. Kategori lain (Pulsa, Paket Data, E-Wallet, Tagihan, PLN, Hiburan)
+ * sengaja tidak diambil — toko ini khusus game.
+ */
+const GAME_CATEGORIES = new Set(['gaming', 'voucher game', 'topup game', 'top up game']);
+
+/**
+ * Operator yang jelas bukan game atau hanya penanda internal penyedia.
+ * Dicocokkan sebagai substring pada nama operator (huruf kecil).
+ */
+const EXCLUDED_OPERATORS = [
+  'nonaktif',
+  'produk nonaktif',
+  'bstation',
+  'hbo',
+  'wifi id',
+  'netflix',
+  'vidio',
+  'disney',
+  'spotify',
+  'youtube',
+  'catchplay',
+  'iflix',
+  'viu',
+];
 
 function isGameProduct(p: NexShopProduct): boolean {
-  const kategori = (p.kategori ?? '').toLowerCase();
-  return GAME_CATEGORIES.some((c) => kategori.includes(c));
+  const kategori = (p.kategori ?? '').trim().toLowerCase();
+  if (!GAME_CATEGORIES.has(kategori)) return false;
+
+  const operator = (p.operator ?? '').trim().toLowerCase();
+  if (!operator) return false;
+  return !EXCLUDED_OPERATORS.some((bad) => operator.includes(bad));
 }
 
 export type SyncResult = {
@@ -18,6 +48,7 @@ export type SyncResult = {
   gameProducts: number;
   gamesCreated: number;
   gamesTotal: number;
+  operatorsMapped: number;
   productsUpserted: number;
   productsDeactivated: number;
   durationMs: number;
@@ -26,8 +57,13 @@ export type SyncResult = {
 /**
  * Menarik katalog NexShop lalu menyimpannya ke Supabase.
  *
+ * - Game dikelompokkan berdasarkan SLUG, bukan nama operator. Beberapa operator
+ *   yang merujuk game sama (mis. "Mobile Legends" dan "Mobile Legend Kios
+ *   Pintar") jatuh ke satu kartu etalase.
  * - Game baru dibuat NONAKTIF supaya kamu yang memilih mana yang dijual.
- * - Harga jual dihitung ulang dari `harga_reseller` terbaru, bukan disalin manual.
+ * - Penyuntingan manual kamu (nama, slug, label input, status aktif, margin)
+ *   tidak pernah ditimpa sinkronisasi berikutnya.
+ * - Harga jual dihitung ulang dari `harga_reseller` terbaru, bukan disalin.
  * - Produk yang hilang dari katalog ditandai nonaktif, bukan dihapus, agar
  *   riwayat pesanan lama tetap utuh.
  */
@@ -39,47 +75,83 @@ export async function syncCatalog(): Promise<SyncResult> {
   const all = await getProducts();
   const gameProducts = all.filter(isGameProduct);
 
-  // --- 1. Pastikan setiap operator punya baris di tabel games -----------------
-  const operators = new Map<string, boolean>();
+  // --- 1. Kelompokkan operator katalog menjadi kandidat game ----------------
+  type Candidate = ReturnType<typeof buildGameRow> & {
+    operators: string[];
+    kind: 'game' | 'voucher';
+  };
+  const bySlug = new Map<string, Candidate>();
+
   for (const p of gameProducts) {
-    const needsServer = operators.get(p.operator) || p.butuh_server_id;
-    operators.set(p.operator, needsServer);
+    const operator = p.operator.trim();
+    const row = buildGameRow(operator, Boolean(p.butuh_server_id));
+    const existing = bySlug.get(row.slug);
+    // Kategori NexShop menentukan bagian etalase. Sekali sebuah entri punya
+    // produk "Gaming", ia diperlakukan sebagai game meski juga punya voucher.
+    const kind = (p.kategori ?? '').trim().toLowerCase() === 'voucher game' ? 'voucher' : 'game';
+
+    if (existing) {
+      if (!existing.operators.includes(operator)) existing.operators.push(operator);
+      // Kalau salah satu operator butuh Server ID, gamenya butuh Server ID.
+      existing.needs_server_id = existing.needs_server_id || row.needs_server_id;
+      if (kind === 'game') existing.kind = 'game';
+    } else {
+      bySlug.set(row.slug, { ...row, operators: [operator], kind });
+    }
   }
 
-  const { data: existingGames } = await db.from('games').select('id, slug, provider_operator');
-  const byOperator = new Map(
-    (existingGames ?? []).map((g) => [g.provider_operator ?? '', g as { id: string; slug: string }]),
-  );
+  // --- 2. Sisipkan game baru, perbarui pemetaan operator game lama ----------
+  // Kolom provider_operators berasal dari migrasi 03. Kalau migrasi itu belum
+  // dijalankan, sinkronisasi tetap bekerja — daftar operator hanya tidak ikut
+  // disimpan (pemetaannya sendiri dihitung ulang tiap kali sinkron).
+  const [operatorProbe, kindProbe] = await Promise.all([
+    db.from('games').select('provider_operators').limit(1),
+    db.from('games').select('kind').limit(1),
+  ]);
+  const hasOperatorList = !operatorProbe.error;
+  const hasKind = !kindProbe.error;
+
+  const { data: existingGames } = await db.from('games').select('id, slug');
+  const gameIdBySlug = new Map((existingGames ?? []).map((g) => [g.slug, g.id as string]));
 
   let gamesCreated = 0;
-  for (const [operator, needsServer] of operators) {
-    if (byOperator.has(operator)) continue;
-    const row = buildGameRow(operator, needsServer);
+  for (const [slug, candidate] of bySlug) {
+    const { operators, kind, ...row } = candidate;
+    const known = gameIdBySlug.get(slug);
+    const operatorFields: Record<string, unknown> = { provider_operator: operators[0] };
+    if (hasOperatorList) operatorFields.provider_operators = operators;
 
-    // Slug harus unik; tambahkan sufiks bila bentrok dengan game lain.
-    let slug = row.slug;
-    let attempt = 1;
-    while ((existingGames ?? []).some((g) => g.slug === slug)) {
-      slug = `${row.slug}-${++attempt}`;
+    if (known) {
+      // Game sudah ada: hanya segarkan pemetaan operator. Kolom lain — termasuk
+      // `kind` yang mungkin kamu ubah manual — tidak pernah ditimpa.
+      await db.from('games').update(operatorFields).eq('id', known);
+      continue;
     }
 
     const { data: inserted } = await db
       .from('games')
-      .insert({ ...row, slug, is_active: false })
-      .select('id, slug, provider_operator')
+      .insert({ ...row, ...operatorFields, ...(hasKind ? { kind } : {}), is_active: false })
+      .select('id, slug')
       .maybeSingle();
 
     if (inserted) {
-      byOperator.set(operator, inserted as { id: string; slug: string });
-      (existingGames ?? []).push(inserted as never);
+      gameIdBySlug.set(inserted.slug as string, inserted.id as string);
       gamesCreated++;
     }
   }
 
-  // --- 2. Upsert produk -------------------------------------------------------
+  // Peta operator -> game_id, dipakai saat menyimpan produk.
+  const gameIdByOperator = new Map<string, string>();
+  for (const [slug, candidate] of bySlug) {
+    const id = gameIdBySlug.get(slug);
+    if (!id) continue;
+    for (const operator of candidate.operators) gameIdByOperator.set(operator, id);
+  }
+
+  // --- 3. Upsert produk -----------------------------------------------------
   const now = new Date().toISOString();
 
-  // Margin per-produk yang sudah kamu atur manual harus dipertahankan.
+  // Margin per-produk dan status tampil yang sudah kamu atur harus bertahan.
   const { data: existingProducts } = await db
     .from('products')
     .select('kode_produk, margin_type, margin_value, is_active, sort_order, label, is_promo');
@@ -93,7 +165,7 @@ export async function syncCatalog(): Promise<SyncResult> {
     });
 
     return {
-      game_id: byOperator.get(p.operator)?.id ?? null,
+      game_id: gameIdByOperator.get(p.operator.trim()) ?? null,
       kode_produk: p.kode_produk,
       name: p.nama,
       category: p.kategori,
@@ -122,7 +194,7 @@ export async function syncCatalog(): Promise<SyncResult> {
     productsUpserted += chunk.length;
   }
 
-  // --- 3. Nonaktifkan produk yang sudah tidak ada di katalog ------------------
+  // --- 4. Nonaktifkan produk yang sudah tidak ada di katalog ----------------
   const activeCodes = new Set(rows.map((r) => r.kode_produk));
   const stale = (existingProducts ?? [])
     .filter((p) => !activeCodes.has(p.kode_produk))
@@ -143,6 +215,7 @@ export async function syncCatalog(): Promise<SyncResult> {
       at: now,
       fetched: all.length,
       game_products: gameProducts.length,
+      games: bySlug.size,
       games_created: gamesCreated,
     },
     updated_at: now,
@@ -152,7 +225,8 @@ export async function syncCatalog(): Promise<SyncResult> {
     fetched: all.length,
     gameProducts: gameProducts.length,
     gamesCreated,
-    gamesTotal: operators.size,
+    gamesTotal: bySlug.size,
+    operatorsMapped: gameIdByOperator.size,
     productsUpserted,
     productsDeactivated,
     durationMs: Date.now() - startedAt,

@@ -45,21 +45,21 @@ export function OrderStatusLive({ initial }: { initial: PublicOrder }) {
     <section
       className={cn(
         'card-surface p-5',
-        isSuccess && 'border-mint-500/40',
+        isSuccess && 'border-success/40',
         isFailed && 'border-red-500/40',
       )}
     >
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-3">
           {isSuccess ? (
-            <CheckCircle2 className="h-6 w-6 shrink-0 text-mint-400" aria-hidden />
+            <CheckCircle2 className="h-6 w-6 shrink-0 text-success" aria-hidden />
           ) : isFailed ? (
-            <XCircle className="h-6 w-6 shrink-0 text-red-400" aria-hidden />
+            <XCircle className="h-6 w-6 shrink-0 text-danger" aria-hidden />
           ) : (
-            <Loader2 className="h-6 w-6 shrink-0 animate-spin text-flame-500" aria-hidden />
+            <Loader2 className="h-6 w-6 shrink-0 animate-spin text-brand" aria-hidden />
           )}
           <div>
-            <h2 className="text-sm font-bold text-ink-100">
+            <h2 className="text-sm font-bold text-fg">
               {isSuccess
                 ? 'Pesanan Berhasil'
                 : isFailed
@@ -68,7 +68,7 @@ export function OrderStatusLive({ initial }: { initial: PublicOrder }) {
                     ? 'Sedang Diproses'
                     : 'Menunggu Pembayaran'}
             </h2>
-            <p className="mt-1 text-xs leading-relaxed text-ink-400">
+            <p className="mt-1 text-xs leading-relaxed text-fg-muted">
               {isSuccess
                 ? 'Item sudah dikirim ke akun game kamu. Cek notifikasi di dalam game.'
                 : isFailed
@@ -85,26 +85,26 @@ export function OrderStatusLive({ initial }: { initial: PublicOrder }) {
           onClick={refresh}
           disabled={refreshing}
           aria-label="Perbarui status"
-          className="shrink-0 rounded-lg border border-ink-700 p-2 text-ink-400 transition-colors hover:border-flame-500 hover:text-flame-400 disabled:opacity-50"
+          className="shrink-0 rounded-lg border border-line p-2 text-fg-muted transition-colors hover:border-brand-strong hover:text-brand-strong disabled:opacity-50"
         >
           <RefreshCw className={cn('h-4 w-4', refreshing && 'animate-spin')} aria-hidden />
         </button>
       </div>
 
-      <div className="mt-4 flex flex-wrap gap-2 border-t border-ink-800 pt-4">
+      <div className="mt-4 flex flex-wrap gap-2 border-t border-line pt-4">
         <StatusBadge status={order.payment_status} kind="payment" />
         <StatusBadge status={order.fulfillment_status} />
         {isPending && (
-          <span className="text-[11px] text-ink-500">Status diperbarui otomatis tiap 8 detik</span>
+          <span className="text-[11px] text-fg-faint">Status diperbarui otomatis tiap 8 detik</span>
         )}
       </div>
 
       {order.serial_number && (
-        <div className="mt-4 rounded-lg border border-ink-800 bg-ink-850 p-3">
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-ink-500">
+        <div className="mt-4 rounded-lg border border-line bg-surface-2 p-3">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-fg-faint">
             Serial Number
           </span>
-          <p className="mt-1 break-all font-mono text-sm text-mint-400">{order.serial_number}</p>
+          <p className="mt-1 break-all font-mono text-sm text-success">{order.serial_number}</p>
         </div>
       )}
     </section>

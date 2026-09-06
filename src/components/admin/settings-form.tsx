@@ -7,8 +7,8 @@ import type { PricingConfig } from '@/lib/pricing';
 import type { OrderSettings, StoreSettings } from '@/types';
 
 const field =
-  'w-full rounded-lg border border-ink-700 bg-ink-900 px-3 py-2.5 text-sm text-ink-100 focus:border-flame-500 focus:outline-none';
-const label = 'mb-1 block text-[11px] font-semibold uppercase tracking-wider text-ink-500';
+  'w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-fg focus:border-brand-strong focus:outline-none';
+const label = 'mb-1 block text-[11px] font-semibold uppercase tracking-wider text-fg-faint';
 
 export function SettingsForm({
   store,
@@ -35,8 +35,8 @@ export function SettingsForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* ------------------------------------------------------------ toko */}
       <section className="card-surface p-5">
-        <h2 className="text-sm font-bold text-ink-100">Identitas Toko</h2>
-        <p className="mt-1 text-xs text-ink-500">
+        <h2 className="text-sm font-bold text-fg">Identitas Toko</h2>
+        <p className="mt-1 text-xs text-fg-faint">
           Dipakai di footer, halaman kontak, structured data, dan tautan WhatsApp.
         </p>
 
@@ -101,8 +101,8 @@ export function SettingsForm({
 
       {/* ---------------------------------------------------------- margin */}
       <section className="card-surface p-5">
-        <h2 className="text-sm font-bold text-ink-100">Margin &amp; Harga Jual</h2>
-        <p className="mt-1 text-xs leading-relaxed text-ink-500">
+        <h2 className="text-sm font-bold text-fg">Margin &amp; Harga Jual</h2>
+        <p className="mt-1 text-xs leading-relaxed text-fg-faint">
           Harga jual = harga modal + margin, dibulatkan ke atas. Menyimpan halaman ini otomatis
           menghitung ulang seluruh harga produk yang tidak punya margin khusus.
         </p>
@@ -147,7 +147,7 @@ export function SettingsForm({
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <label className="flex items-center gap-2 text-sm text-ink-300">
+          <label className="flex items-center gap-2 text-sm text-fg-body">
             <input type="checkbox" name="unique_code" defaultChecked={pricing.unique_code} />
             Pakai kode unik pada pembayaran manual
           </label>
@@ -166,7 +166,7 @@ export function SettingsForm({
 
       {/* --------------------------------------------------------- pesanan */}
       <section className="card-surface p-5">
-        <h2 className="text-sm font-bold text-ink-100">Aturan Pesanan</h2>
+        <h2 className="text-sm font-bold text-fg">Aturan Pesanan</h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <div>
             <label className={label} htmlFor="expire_minutes">Batas Bayar (menit)</label>
@@ -178,15 +178,15 @@ export function SettingsForm({
               className={field}
             />
           </div>
-          <label className="flex items-center gap-2 text-sm text-ink-300">
+          <label className="flex items-center gap-2 text-sm text-fg-body">
             <input type="checkbox" name="auto_process" defaultChecked={order.auto_process} />
             Proses otomatis setelah lunas
           </label>
-          <label className="flex items-center gap-2 text-sm text-ink-300">
+          <label className="flex items-center gap-2 text-sm text-fg-body">
             <input type="checkbox" name="require_whatsapp" defaultChecked={order.require_whatsapp} />
             Wajib isi WhatsApp
           </label>
-          <label className="flex items-center gap-2 text-sm text-ink-300">
+          <label className="flex items-center gap-2 text-sm text-fg-body">
             <input type="checkbox" name="require_email" defaultChecked={order.require_email} />
             Wajib isi email
           </label>
@@ -197,7 +197,7 @@ export function SettingsForm({
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-2 rounded-xl bg-flame-500 px-5 py-3 text-sm font-bold text-white hover:bg-flame-600 disabled:opacity-60"
+          className="inline-flex items-center gap-2 rounded-xl bg-brand-strong px-5 py-3 text-sm font-bold text-white hover:bg-brand-hover disabled:opacity-60"
         >
           {pending ? (
             <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -206,7 +206,7 @@ export function SettingsForm({
           )}
           Simpan Pengaturan
         </button>
-        {message && <span className="text-sm text-ink-300">{message}</span>}
+        {message && <span className="text-sm text-fg-body">{message}</span>}
       </div>
     </form>
   );
