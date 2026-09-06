@@ -1,5 +1,5 @@
 -- ============================================================================
--- TOP UP GAME MURAH  ·  Data awal (seed)
+-- SAYBA VOUCHER  ·  Data awal (seed)
 -- Jalankan SETELAH 01_schema.sql
 -- ============================================================================
 
@@ -8,10 +8,10 @@
 -- ---------------------------------------------------------------------------
 insert into public.settings (key, value) values
   ('store', jsonb_build_object(
-      'name',        'Top Up Game Murah',
-      'tagline',     'Top Up Game Termurah & Tercepat di Pontianak',
-      'url',         'https://topupgamemurah.sayba.id',
-      'whatsapp',    '6281234567890',
+      'name',        'Sayba Voucher',
+      'tagline',     'Semua Kebutuhan Digital dalam Satu Tempat',
+      'url',         'https://topup.sayba.id',
+      'whatsapp',    '6287803445749',
       'email',       'sayba.help@gmail.com',
       'city',        'Pontianak',
       'province',    'Kalimantan Barat',
@@ -69,34 +69,34 @@ on conflict (code) do nothing;
 -- 3. FAQ  (juga dipakai untuk structured data FAQPage di halaman depan)
 -- ---------------------------------------------------------------------------
 insert into public.faqs (question, answer, sort_order) values
-  ('Apakah top up di Top Up Game Murah aman?',
-   'Aman. Semua transaksi diproses lewat jalur resmi distributor berlisensi, tanpa perlu login atau memberikan password akun game kamu. Kami hanya butuh User ID dan Server ID.', 1),
-  ('Berapa lama proses top up-nya?',
-   'Rata-rata 3-30 detik setelah pembayaran terkonfirmasi. Diamond, UC, atau item langsung masuk otomatis ke akun game kamu 24 jam nonstop.', 2),
-  ('Apakah melayani pembeli di Pontianak dan Kalimantan Barat?',
-   'Ya. Kami berbasis di Pontianak dan melayani seluruh Kalimantan Barat: Kubu Raya, Mempawah, Singkawang, Sanggau, Sintang, Ketapang, sampai Sambas. Prosesnya online sehingga bisa dari mana saja.', 3),
+  ('Produk apa saja yang bisa dibeli di sini?',
+   'Pulsa dan paket data semua operator, token listrik PLN prabayar, saldo e-wallet seperti DANA, GoPay, OVO, dan ShopeePay, pembayaran tagihan seperti PDAM dan BPJS, voucher digital seperti Steam dan Google Play, serta top up game.', 1),
+  ('Berapa lama pesanan saya diproses?',
+   'Rata-rata 3-30 detik setelah pembayaran terkonfirmasi. Pulsa, token listrik, saldo, dan item game masuk otomatis tanpa perlu menunggu admin.', 2),
+  ('Apakah transaksi di sini aman?',
+   'Aman. Semua produk diambil dari distributor berlisensi, dan kami hanya meminta nomor tujuan atau User ID. Password, PIN, dan kode OTP tidak pernah kami minta.', 3),
   ('Metode pembayaran apa saja yang tersedia?',
-   'QRIS (semua e-wallet dan mobile banking), DANA, GoPay, OVO, ShopeePay, serta transfer bank BCA, BRI, dan Mandiri.', 4),
+   'QRIS yang bisa discan dari semua e-wallet dan mobile banking, transfer ke DANA, GoPay, OVO, dan ShopeePay, serta transfer bank BCA, BRI, dan Mandiri.', 4),
   ('Kenapa harganya bisa lebih murah?',
-   'Kami mengambil harga distributor langsung sebagai mitra reseller resmi, sehingga margin yang kami ambil jauh lebih tipis dibanding harga in-game.', 5),
-  ('Bagaimana kalau diamond tidak masuk?',
-   'Buka halaman Cek Pesanan dan masukkan kode invoice kamu. Jika status FAILED, dana dikembalikan penuh. Kamu juga bisa langsung menghubungi admin lewat WhatsApp.', 6),
+   'Kami mengambil harga distributor langsung sebagai mitra reseller resmi, sehingga margin yang kami ambil jauh lebih tipis dibanding harga eceran pada umumnya.', 5),
+  ('Bagaimana kalau pesanan saya gagal?',
+   'Buka halaman Cek Pesanan dan masukkan kode invoice kamu. Jika statusnya gagal, dana dikembalikan penuh tanpa potongan.', 6),
   ('Apakah perlu daftar atau punya akun dulu?',
-   'Tidak perlu. Cukup pilih game, masukkan User ID, pilih nominal, bayar. Kode invoice untuk melacak pesanan dikirim langsung di layar dan lewat WhatsApp.', 7),
-  ('Apakah bisa top up tengah malam?',
-   'Bisa. Sistem berjalan otomatis 24 jam, termasuk hari libur. Admin manusia siaga pukul 08.00-23.00 WIB.', 8)
+   'Tidak perlu. Pilih produk, masukkan nomor tujuan, bayar, selesai.', 7),
+  ('Apakah melayani seluruh Indonesia?',
+   'Ya. Seluruh prosesnya online sehingga bisa diakses dari mana saja di Indonesia, kapan saja, termasuk hari libur.', 8),
+  ('Bisa transaksi tengah malam?',
+   'Bisa. Sistem berjalan otomatis 24 jam. Admin manusia siaga pukul 08.00-23.00 WIB.', 9),
+  ('Nomor token listrik saya dikirim ke mana?',
+   'Nomor token tampil di halaman invoice pesananmu dan juga dikirim ke nomor WhatsApp yang kamu isi saat checkout.', 10)
 on conflict do nothing;
 
 -- ---------------------------------------------------------------------------
--- 4. TESTIMONI AWAL (silakan ganti dengan testimoni asli pelanggan kamu)
+-- 4. TESTIMONI
+--    Sengaja dibiarkan kosong. Isi hanya dengan testimoni asli dari pelanggan
+--    kamu — testimoni karangan menyesatkan pembeli dan berisiko bagi tokomu.
+--    Bagian testimoni di beranda tersembunyi otomatis selama tabel ini kosong.
 -- ---------------------------------------------------------------------------
-insert into public.testimonials (name, city, game, rating, message, sort_order) values
-  ('Rizky A.',  'Pontianak',  'Mobile Legends', 5, 'Order jam 2 pagi, diamond masuk kurang dari 10 detik. Harganya paling murah se-Pontianak.', 1),
-  ('Dewi P.',   'Kubu Raya',  'Free Fire',      5, 'Awalnya ragu, ternyata legit. Sudah 6x top up dan selalu lancar.', 2),
-  ('Andre S.',  'Singkawang', 'PUBG Mobile',    5, 'UC langsung masuk, adminnya fast respon di WhatsApp. Recommended.', 3),
-  ('Fitri N.',  'Pontianak',  'Genshin Impact', 5, 'Bayar pakai QRIS gampang banget, gak perlu daftar akun dulu.', 4),
-  ('Bagas W.',  'Mempawah',   'Honor of Kings', 5, 'Selisihnya lumayan dibanding beli langsung di game. Bakal langganan.', 5)
-on conflict do nothing;
 
 -- ---------------------------------------------------------------------------
 -- 5. JADIKAN DIRIMU ADMIN
