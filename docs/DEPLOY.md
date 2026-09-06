@@ -1,4 +1,4 @@
-# Panduan Deploy — Top Up Game Murah
+# Panduan Deploy — Sayba Voucher
 
 Urutan di bawah dikerjakan berurutan. Setiap tahap bergantung pada tahap sebelumnya.
 Perkiraan waktu total: 45–60 menit.
@@ -38,7 +38,7 @@ menggantung bila webhook tidak sampai.
 ## Tahap 1 — Siapkan proyek Supabase
 
 1. Buka [supabase.com/dashboard](https://supabase.com/dashboard) → **New project**.
-   - Name: `topupgamemurah`
+   - Name: `sayba-voucher`
    - Region: **Southeast Asia (Singapore)** — paling dekat ke Indonesia
    - Database password: simpan di pengelola kata sandi
 2. Tunggu proyek selesai dibuat (±2 menit).
@@ -46,7 +46,15 @@ menggantung bila webhook tidak sampai.
 4. Buat query baru lagi, tempel `supabase/02_seed.sql`, klik **Run**.
    Bagian terakhir seed (`insert into admin_users`) belum menemukan siapa pun — itu wajar,
    dijalankan ulang di Tahap 2.
-5. Buka **Project Settings → API**, catat tiga nilai ini:
+5. Buat query ketiga, tempel `supabase/03_migration_operator_mapping.sql`, klik **Run**.
+   Ini membuat satu game bisa memetakan beberapa nama operator NexShop sekaligus
+   (mis. "Mobile Legends" + "Mobile Legend Kios Pintar" jadi satu kartu etalase).
+   Kode tetap berjalan tanpa migrasi ini, tetapi daftar operatornya tidak tersimpan.
+6. Buat query keempat, tempel `supabase/04_migration_kind.sql`, klik **Run**.
+   Ini memisahkan etalase menjadi Voucher dan Top Up Game. Situs tetap berjalan tanpa
+   migrasi ini (pembagiannya diturunkan dari kategori produk), tetapi dengan migrasi
+   kamu bisa memindahkan sebuah produk antar bagian dari database.
+7. Buka **Project Settings → API**, catat tiga nilai ini:
 
    | Label di dashboard | Nama environment variable |
    |---|---|
@@ -86,9 +94,9 @@ menggantung bila webhook tidak sampai.
 cd "D:/SAYBA ARC/SAYBA WEB TOPUP/TOP UP GAME MURAH"
 git init
 git add .
-git commit -m "Top Up Game Murah - rilis awal"
+git commit -m "Sayba Voucher - rilis awal"
 git branch -M main
-git remote add origin https://github.com/<akun-kamu>/topupgamemurah.git
+git remote add origin https://github.com/<akun-kamu>/sayba-voucher.git
 git push -u origin main
 ```
 
@@ -105,7 +113,7 @@ git push -u origin main
 
    | Key | Value | Catatan |
    |---|---|---|
-   | `NEXT_PUBLIC_SITE_URL` | `https://topupgamemurah.sayba.id` | tanpa garis miring di akhir |
+   | `NEXT_PUBLIC_SITE_URL` | `https://topup.sayba.id` | tanpa garis miring di akhir |
    | `NEXT_PUBLIC_SUPABASE_URL` | `https://xxxx.supabase.co` | dari Tahap 1 |
    | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `eyJhbGciOi...` | dari Tahap 1 |
    | `SUPABASE_SERVICE_ROLE_KEY` | `eyJhbGciOi...` | **rahasia** |
@@ -123,17 +131,17 @@ git push -u origin main
 
 ## Tahap 5 — Pasang domain
 
-1. Vercel → proyek → **Settings → Domains → Add** → `topupgamemurah.sayba.id`.
+1. Vercel → proyek → **Settings → Domains → Add** → `topup.sayba.id`.
 2. Vercel menampilkan satu record CNAME. Di panel DNS `sayba.id`, tambahkan:
 
    ```
    Type   Name              Value                    TTL
-   CNAME  topupgamemurah    cname.vercel-dns.com     3600
+   CNAME  sayba-voucher    cname.vercel-dns.com     3600
    ```
 
    (Pakai nilai persis yang ditampilkan Vercel — bisa berbeda per akun.)
 3. Tunggu propagasi (5–30 menit). Sertifikat HTTPS diterbitkan otomatis.
-4. Pastikan `NEXT_PUBLIC_SITE_URL` sudah `https://topupgamemurah.sayba.id`, lalu
+4. Pastikan `NEXT_PUBLIC_SITE_URL` sudah `https://topup.sayba.id`, lalu
    **Redeploy** sekali supaya metadata dan sitemap memakai domain final.
 
 ---
@@ -166,7 +174,7 @@ terisi asal-asalan — respons `403` menyertakan `client_ip` berisi alamat seben
 Isi dengan:
 
 ```
-https://topupgamemurah.sayba.id/api/webhook/nexshop
+https://topup.sayba.id/api/webhook/nexshop
 ```
 
 Lalu tekan **Tes**. Endpoint harus membalas `200` — kode penerima sudah dibuat untuk itu.
@@ -187,16 +195,20 @@ dikembalikan otomatis. Pantau sisanya lewat tombol **Cek Saldo Deposit** di `/ad
 
 ## Tahap 7 — Isi etalase
 
-1. Buka `https://topupgamemurah.sayba.id/admin/login`, masuk dengan akun Tahap 2.
+1. Buka `https://topup.sayba.id/admin/login`, masuk dengan akun Tahap 2.
 2. Di halaman ringkasan, klik **Sinkron Katalog NexShop**.
-   Seluruh produk kategori game masuk ke database. **Semua game dibuat nonaktif** —
-   ini disengaja supaya kamu yang memilih mana yang dijual.
+   Yang diambil hanya kategori `Gaming` dan `Voucher Game` (±2.500 produk dari ±7.100
+   produk NexShop) — pulsa, paket data, e-wallet, dan tagihan sengaja dilewati karena
+   toko ini khusus game. **Semua game baru dibuat nonaktif** — ini disengaja supaya
+   kamu yang memilih mana yang dijual.
 3. Buka **Game**, aktifkan game yang ingin kamu jual, tandai beberapa sebagai *Populer*
    agar tampil di baris "Game Paling Dicari".
 4. Untuk tiap game aktif, klik **Ubah** dan periksa:
    - **Slug URL** — ini yang jadi alamat halaman, mis. `mobile-legends`
    - **Kode Game** — diperlukan agar tombol Cek Nickname berfungsi
-   - **Label Input ID** & apakah butuh Server ID
+   - **Label Input ID** & apakah butuh Server ID. Katalog NexShop hampir tidak pernah
+     menandai `butuh_server_id`, jadi nilai ini datang dari preset di
+     `src/lib/game-presets.ts` — periksa manual untuk game di luar daftar preset
    - **URL Ikon** — unggah ikon game ke Supabase Storage, tempel URL publiknya
 5. Buka **Pengaturan**:
    - Isi nomor WhatsApp, email, dan identitas toko
@@ -209,10 +221,10 @@ dikembalikan otomatis. Pantau sisanya lewat tombol **Cek Saldo Deposit** di `/ad
 
 ## Tahap 8 — SEO
 
-1. **Google Search Console** → Add property → URL prefix `https://topupgamemurah.sayba.id`
+1. **Google Search Console** → Add property → URL prefix `https://topup.sayba.id`
    - Verifikasi termudah: DNS TXT record di `sayba.id`
    - Alternatif: salin kode meta tag ke `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` lalu redeploy
-2. Kirim sitemap: `https://topupgamemurah.sayba.id/sitemap.xml`
+2. Kirim sitemap: `https://topup.sayba.id/sitemap.xml`
 3. **Google Business Profile** — daftarkan sebagai bisnis di Pontianak. Ini pengungkit
    terbesar untuk kata kunci "top up game pontianak" dan pencarian "terdekat".
 4. **Bing Webmaster Tools** — bisa impor langsung dari Search Console.
@@ -253,15 +265,32 @@ Kalau ketiganya lolos, toko siap dipakai.
 | Ubah margin | `/admin/settings` (global) atau `/admin/products` (per nominal) |
 | Pesanan macet | `/admin/orders` → **Cek Status** atau **Ulangi Kirim** |
 
-Cron yang berjalan otomatis (diatur di `vercel.json`):
+### Cron bawaan Vercel
 
-- `/api/cron/sync` — tiap 6 jam, menyegarkan katalog & harga modal
-- `/api/cron/reconcile` — tiap 5 menit, menutup pesanan kedaluwarsa & menyelaraskan status
+`vercel.json` sudah disetel untuk paket **Hobby**, yang hanya mengizinkan cron
+**sekali sehari** per job (jadwal lebih sering ditolak saat Deploy):
 
-> Paket Vercel Hobby membatasi cron menjadi **satu kali sehari**. Untuk jadwal 5 menit,
-> kamu butuh paket Pro, atau gantikan dengan pemanggil eksternal gratis
-> (cron-job.org, GitHub Actions) yang memanggil URL-nya dengan header
-> `Authorization: Bearer <CRON_SECRET>`.
+- `/api/cron/sync` — 03.00 WIB, menyegarkan katalog & harga modal
+- `/api/cron/reconcile` — 03.30 WIB, jaring pengaman harian
+
+### Rekonsiliasi tiap 5 menit (disarankan)
+
+Sekali sehari terlalu jarang untuk menutup pesanan kedaluwarsa dan mengejar webhook
+yang telat. Pakai pemanggil eksternal gratis — daftar di
+[cron-job.org](https://cron-job.org), lalu buat satu job:
+
+| Kolom | Isi |
+|---|---|
+| URL | `https://topup.sayba.id/api/cron/reconcile` |
+| Jadwal | Every 5 minutes |
+| Request method | GET |
+| Header | `Authorization: Bearer <isi CRON_SECRET kamu>` |
+
+Alternatif lain: GitHub Actions dengan `schedule: cron`, atau naik ke Vercel Pro lalu
+kembalikan jadwal di `vercel.json` menjadi `*/5 * * * *`.
+
+> Tanpa ini pun pesanan tetap selesai: halaman invoice pembeli menyegarkan statusnya
+> sendiri tiap 8 detik dan ikut menarik status terbaru dari NexShop.
 
 ---
 
@@ -275,6 +304,8 @@ Cron yang berjalan otomatis (diatur di `vercel.json`):
 | `429 RATE_LIMITED` | Melebihi 120 permintaan/menit. Kurangi frekuensi sinkronisasi |
 | Webhook selalu `401` | `NEXSHOP_WEBHOOK_SECRET` tidak cocok dengan Partner Portal |
 | Etalase kosong | Belum sinkron katalog, atau semua game masih nonaktif |
+| Game tertentu tidak muncul setelah sinkron | Produknya berada di kategori NexShop selain `Gaming` / `Voucher Game`. Tambahkan kategorinya di `GAME_CATEGORIES` pada `src/lib/sync.ts` |
+| Satu game muncul dua kartu | Migrasi 03 belum dijalankan, atau nama operatornya belum dikenali. Tambahkan aliasnya di `src/lib/game-presets.ts` |
 | "Akses Ditolak" di `/admin` | Email kamu belum ada di tabel `admin_users` (Tahap 2) |
 | Harga tidak berubah setelah margin diganti | Klik **Hitung Ulang Harga** di `/admin` |
 
