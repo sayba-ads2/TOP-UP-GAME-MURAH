@@ -2,65 +2,52 @@ import 'server-only';
 import { supabaseAdmin } from './supabase';
 import { getProducts, type NexShopProduct } from './nexshop';
 import { buildGameRow } from './game-presets';
+import { mapProviderCategory, type CategoryKey } from './categories';
 import { calculateSellPrice } from './pricing';
 import { getPricingConfig } from './queries';
 
 /**
- * Kategori katalog NexShop yang dianggap produk game.
- *
- * Katalog memakai "Gaming" untuk top up in-game dan "Voucher Game" untuk kode
- * voucher. Kategori lain (Pulsa, Paket Data, E-Wallet, Tagihan, PLN, Hiburan)
- * sengaja tidak diambil — toko ini khusus game.
- */
-const GAME_CATEGORIES = new Set(['gaming', 'voucher game', 'topup game', 'top up game']);
-
-/**
- * Operator yang jelas bukan game atau hanya penanda internal penyedia.
+ * Operator yang hanya penanda internal penyedia, bukan produk sungguhan.
  * Dicocokkan sebagai substring pada nama operator (huruf kecil).
  */
-const EXCLUDED_OPERATORS = [
-  'nonaktif',
-  'produk nonaktif',
-  'bstation',
-  'hbo',
-  'wifi id',
-  'netflix',
-  'vidio',
-  'disney',
-  'spotify',
-  'youtube',
-  'catchplay',
-  'iflix',
-  'viu',
-];
+const EXCLUDED_OPERATORS = ['nonaktif', 'produk nonaktif'];
 
-function isGameProduct(p: NexShopProduct): boolean {
-  const kategori = (p.kategori ?? '').trim().toLowerCase();
-  if (!GAME_CATEGORIES.has(kategori)) return false;
+/**
+ * Menentukan apakah sebuah produk katalog kita jual, sekaligus kategorinya.
+ * Kategori yang tidak dikenal registri (src/lib/categories.ts) dilewati.
+ */
+function classify(p: NexShopProduct): CategoryKey | null {
+  const category = mapProviderCategory(p.kategori ?? '');
+  if (!category) return null;
 
   const operator = (p.operator ?? '').trim().toLowerCase();
-  if (!operator) return false;
-  return !EXCLUDED_OPERATORS.some((bad) => operator.includes(bad));
+  if (!operator) return null;
+  if (EXCLUDED_OPERATORS.some((bad) => operator.includes(bad))) return null;
+
+  return category.key;
 }
 
 export type SyncResult = {
   fetched: number;
-  gameProducts: number;
+  sellableProducts: number;
   gamesCreated: number;
   gamesTotal: number;
   operatorsMapped: number;
   productsUpserted: number;
   productsDeactivated: number;
+  gamesRemoved: number;
   durationMs: number;
 };
 
 /**
  * Menarik katalog NexShop lalu menyimpannya ke Supabase.
  *
- * - Game dikelompokkan berdasarkan SLUG, bukan nama operator. Beberapa operator
- *   yang merujuk game sama (mis. "Mobile Legends" dan "Mobile Legend Kios
+ * - Brand dikelompokkan berdasarkan SLUG, bukan nama operator. Beberapa operator
+ *   yang merujuk brand sama (mis. "Mobile Legends" dan "Mobile Legend Kios
  *   Pintar") jatuh ke satu kartu etalase.
- * - Game baru dibuat NONAKTIF supaya kamu yang memilih mana yang dijual.
+ * - Kategori diambil dari registri src/lib/categories.ts: pulsa, paket data,
+ *   token listrik, e-wallet, game, voucher, tagihan, hiburan, dan e-toll.
+ * - Brand baru dibuat NONAKTIF supaya kamu yang memilih mana yang dijual.
  * - Penyuntingan manual kamu (nama, slug, label input, status aktif, margin)
  *   tidak pernah ditimpa sinkronisasi berikutnya.
  * - Harga jual dihitung ulang dari `harga_reseller` terbaru, bukan disalin.
@@ -73,31 +60,51 @@ export async function syncCatalog(): Promise<SyncResult> {
   const pricing = await getPricingConfig();
 
   const all = await getProducts();
-  const gameProducts = all.filter(isGameProduct);
+  const sellable = all
+    .map((p) => ({ product: p, kind: classify(p) }))
+    .filter((entry): entry is { product: NexShopProduct; kind: CategoryKey } => entry.kind !== null);
 
-  // --- 1. Kelompokkan operator katalog menjadi kandidat game ----------------
+  // --- 1. Kelompokkan operator katalog menjadi kandidat brand ---------------
   type Candidate = ReturnType<typeof buildGameRow> & {
     operators: string[];
-    kind: 'game' | 'voucher';
+    kind: CategoryKey;
+    kindVotes: Map<CategoryKey, number>;
   };
   const bySlug = new Map<string, Candidate>();
 
-  for (const p of gameProducts) {
+  for (const { product: p, kind } of sellable) {
     const operator = p.operator.trim();
-    const row = buildGameRow(operator, Boolean(p.butuh_server_id));
+    const row = buildGameRow(operator, Boolean(p.butuh_server_id), kind);
     const existing = bySlug.get(row.slug);
-    // Kategori NexShop menentukan bagian etalase. Sekali sebuah entri punya
-    // produk "Gaming", ia diperlakukan sebagai game meski juga punya voucher.
-    const kind = (p.kategori ?? '').trim().toLowerCase() === 'voucher game' ? 'voucher' : 'game';
 
     if (existing) {
       if (!existing.operators.includes(operator)) existing.operators.push(operator);
-      // Kalau salah satu operator butuh Server ID, gamenya butuh Server ID.
+      // Kalau salah satu operator butuh Server ID, brand-nya butuh Server ID.
       existing.needs_server_id = existing.needs_server_id || row.needs_server_id;
-      if (kind === 'game') existing.kind = 'game';
+      existing.kindVotes.set(kind, (existing.kindVotes.get(kind) ?? 0) + 1);
     } else {
-      bySlug.set(row.slug, { ...row, operators: [operator], kind });
+      bySlug.set(row.slug, {
+        ...row,
+        operators: [operator],
+        kind,
+        kindVotes: new Map([[kind, 1]]),
+      });
     }
+  }
+
+  // Sebuah brand bisa punya produk lintas kategori (mis. Telkomsel menjual
+  // pulsa sekaligus paket data). Kategori yang menang adalah yang produknya
+  // paling banyak, bukan yang kebetulan terbaca pertama.
+  for (const candidate of bySlug.values()) {
+    let best: CategoryKey = candidate.kind;
+    let bestCount = -1;
+    for (const [kind, count] of candidate.kindVotes) {
+      if (count > bestCount) {
+        best = kind;
+        bestCount = count;
+      }
+    }
+    candidate.kind = best;
   }
 
   // --- 2. Sisipkan game baru, perbarui pemetaan operator game lama ----------
@@ -116,7 +123,7 @@ export async function syncCatalog(): Promise<SyncResult> {
 
   let gamesCreated = 0;
   for (const [slug, candidate] of bySlug) {
-    const { operators, kind, ...row } = candidate;
+    const { operators, kind, kindVotes: _votes, ...row } = candidate;
     const known = gameIdBySlug.get(slug);
     const operatorFields: Record<string, unknown> = { provider_operator: operators[0] };
     if (hasOperatorList) operatorFields.provider_operators = operators;
@@ -157,7 +164,7 @@ export async function syncCatalog(): Promise<SyncResult> {
     .select('kode_produk, margin_type, margin_value, is_active, sort_order, label, is_promo');
   const existingByCode = new Map((existingProducts ?? []).map((p) => [p.kode_produk, p]));
 
-  const rows = gameProducts.map((p) => {
+  const rows = sellable.map(({ product: p }) => {
     const prev = existingByCode.get(p.kode_produk);
     const sellPrice = calculateSellPrice(p.harga_reseller, pricing, {
       margin_type: prev?.margin_type ?? null,
@@ -209,12 +216,43 @@ export async function syncCatalog(): Promise<SyncResult> {
     }
   }
 
+  // --- 5. Bersihkan brand yatim -------------------------------------------
+  // Penamaan brand bisa berubah (mis. "DATA TELKOMSEL" kini jatuh ke slug
+  // paket-data-telkomsel), menyisakan baris lama tanpa produk.
+  //
+  // Dua pengaman: hanya baris NONAKTIF yang tidak dirujuk katalog saat ini,
+  // DAN keberadaan produknya diperiksa langsung per-baris. Pemeriksaan itu
+  // sengaja tidak memakai satu query besar berisi seluruh product.game_id —
+  // PostgREST memotong hasil di 1000 baris, dan pemotongan itu akan membuat
+  // brand yang sebenarnya terpakai ikut terhapus.
+  const referenced = new Set(gameIdBySlug.values());
+  const { data: inactiveGames } = await db
+    .from('games')
+    .select('id')
+    .eq('is_active', false);
+
+  const suspects = (inactiveGames ?? [])
+    .map((g) => g.id as string)
+    .filter((id) => !referenced.has(id));
+
+  let gamesRemoved = 0;
+  for (const id of suspects) {
+    const { count } = await db
+      .from('products')
+      .select('id', { count: 'exact', head: true })
+      .eq('game_id', id);
+    if ((count ?? 0) > 0) continue;
+
+    await db.from('games').delete().eq('id', id);
+    gamesRemoved++;
+  }
+
   await db.from('settings').upsert({
     key: 'last_sync',
     value: {
       at: now,
       fetched: all.length,
-      game_products: gameProducts.length,
+      sellable_products: sellable.length,
       games: bySlug.size,
       games_created: gamesCreated,
     },
@@ -223,12 +261,13 @@ export async function syncCatalog(): Promise<SyncResult> {
 
   return {
     fetched: all.length,
-    gameProducts: gameProducts.length,
+    sellableProducts: sellable.length,
     gamesCreated,
     gamesTotal: bySlug.size,
     operatorsMapped: gameIdByOperator.size,
     productsUpserted,
     productsDeactivated,
+    gamesRemoved,
     durationMs: Date.now() - startedAt,
   };
 }

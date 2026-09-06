@@ -40,8 +40,8 @@ export function GameBrowser({
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Cari game… misal: Mobile Legends, Free Fire, PUBG"
-          aria-label="Cari game"
+          placeholder="Cari produk… misal: Telkomsel, Token PLN, DANA, Mobile Legends"
+          aria-label="Cari produk"
           className="w-full rounded-xl border border-line bg-surface py-3.5 pl-12 pr-4 text-sm text-fg placeholder:text-fg-faint focus:border-brand-strong focus:outline-none"
         />
       </div>
@@ -50,11 +50,11 @@ export function GameBrowser({
         <div className="card-surface flex flex-col items-center gap-3 px-6 py-14 text-center">
           <SearchX className="h-8 w-8 text-fg-faint" aria-hidden />
           <p className="text-sm font-semibold text-fg">
-            Game &ldquo;{query}&rdquo; belum tersedia
+            &ldquo;{query}&rdquo; belum tersedia
           </p>
           <p className="max-w-sm text-xs text-fg-faint">
-            Hubungi admin lewat WhatsApp — kami bisa menambahkannya kalau produknya tersedia
-            di jaringan distributor kami.
+            Coba kata kunci lain, atau hubungi admin lewat WhatsApp — kami bisa
+            menambahkannya kalau produknya tersedia di jaringan distributor kami.
           </p>
         </div>
       ) : (

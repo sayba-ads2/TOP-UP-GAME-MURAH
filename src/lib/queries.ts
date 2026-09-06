@@ -1,6 +1,7 @@
 import 'server-only';
 import { supabaseAdmin } from './supabase';
 import { DEFAULT_PRICING, type PricingConfig } from './pricing';
+import { mapProviderCategory } from './categories';
 import type {
   Faq,
   Game,
@@ -91,34 +92,79 @@ export async function getGamesByKind(kind: GameKind, limit = 60): Promise<Game[]
 }
 
 /**
- * Cadangan bila migrasi 04 belum dijalankan: bagian etalase diturunkan dari
- * kategori produknya. Hasilnya sama, hanya sedikit lebih mahal — satu query
- * tambahan — sehingga situs tetap benar sambil menunggu migrasi dipasang.
+ * PostgREST memotong hasil di 1000 baris. Untuk pemindaian penuh, halaman
+ * diambil berurutan sampai habis — memakai `.limit()` besar tidak menolong
+ * karena batas itu ditegakkan server, dan hasil yang terpotong diam-diam
+ * membuat kategori terbaca kosong.
  */
-async function deriveGamesByKind(kind: GameKind, limit: number): Promise<Game[]> {
-  const [{ data: productRows }, games] = await Promise.all([
-    supabaseAdmin()
+async function fetchAllProductCategories() {
+  const PAGE = 1000;
+  const out: { game_id: string | null; category: string | null }[] = [];
+
+  for (let offset = 0; ; offset += PAGE) {
+    const { data, error } = await supabaseAdmin()
       .from('products')
       .select('game_id, category')
       .eq('is_active', true)
-      .eq('provider_status', 'ACTIVE'),
-    getActiveGames(),
-  ]);
+      .range(offset, offset + PAGE - 1);
 
-  const voucherIds = new Set<string>();
-  const gameIds = new Set<string>();
-  for (const row of (productRows as { game_id: string | null; category: string | null }[]) ?? []) {
+    if (error || !data) break;
+    out.push(...data);
+    if (data.length < PAGE) break;
+  }
+  return out;
+}
+
+type KindMap = { at: number; map: Map<string, GameKind> };
+let kindMemo: KindMap | null = null;
+const KIND_MEMO_MS = 60_000;
+
+/**
+ * Cadangan bila migrasi kategori belum dijalankan: kategori diturunkan dari
+ * kolom `category` produknya, lalu diingat sebentar supaya satu kali render
+ * halaman tidak memindai tabel produk berkali-kali.
+ *
+ * Setelah 05_migration_categories.sql dijalankan, jalur ini tidak terpakai
+ * lagi karena kolom `kind` menjawab langsung.
+ */
+async function brandKindMap(): Promise<Map<string, GameKind>> {
+  if (kindMemo && Date.now() - kindMemo.at < KIND_MEMO_MS) return kindMemo.map;
+
+  const rows = await fetchAllProductCategories();
+
+  // Sebuah brand bisa punya produk lintas kategori; yang menang adalah
+  // kategori dengan produk terbanyak.
+  const votes = new Map<string, Map<GameKind, number>>();
+  for (const row of rows) {
     if (!row.game_id) continue;
-    if (row.category === 'Voucher Game') voucherIds.add(row.game_id);
-    else gameIds.add(row.game_id);
+    const category = mapProviderCategory(row.category ?? '');
+    if (!category) continue;
+    const perBrand = votes.get(row.game_id) ?? new Map<GameKind, number>();
+    perBrand.set(category.key, (perBrand.get(category.key) ?? 0) + 1);
+    votes.set(row.game_id, perBrand);
   }
 
+  const map = new Map<string, GameKind>();
+  for (const [gameId, perBrand] of votes) {
+    let best: GameKind | null = null;
+    let bestCount = -1;
+    for (const [key, count] of perBrand) {
+      if (count > bestCount) {
+        best = key;
+        bestCount = count;
+      }
+    }
+    if (best) map.set(gameId, best);
+  }
+
+  kindMemo = { at: Date.now(), map };
+  return map;
+}
+
+async function deriveGamesByKind(kind: GameKind, limit: number): Promise<Game[]> {
+  const [map, games] = await Promise.all([brandKindMap(), getActiveGames()]);
   return games
-    .filter((game) =>
-      // Entri yang punya produk in-game selalu dihitung sebagai game, meski
-      // sebagian produknya berupa voucher.
-      kind === 'voucher' ? voucherIds.has(game.id) && !gameIds.has(game.id) : gameIds.has(game.id),
-    )
+    .filter((game) => map.get(game.id) === kind)
     .map((game) => ({ ...game, kind }))
     .slice(0, limit);
 }
@@ -182,21 +228,32 @@ export async function getProductByCode(kodeProduk: string): Promise<Product | nu
   return (data as Product) ?? null;
 }
 
-/** Harga termurah per game, untuk label "mulai dari" di kartu etalase. */
+/**
+ * Harga termurah per brand, untuk label "mulai dari" di kartu etalase.
+ * Dipindai berhalaman karena PostgREST memotong hasil di 1000 baris — tanpa
+ * itu, brand yang produknya di luar halaman pertama tampil tanpa harga.
+ */
 export async function getCheapestPriceByGame(): Promise<Record<string, number>> {
-  const { data } = await supabaseAdmin()
-    .from('products')
-    .select('game_id, sell_price')
-    .eq('is_active', true)
-    .eq('provider_status', 'ACTIVE')
-    .gt('sell_price', 0);
-
+  const PAGE = 1000;
   const map: Record<string, number> = {};
-  for (const row of (data as { game_id: string | null; sell_price: number }[]) ?? []) {
-    if (!row.game_id) continue;
-    if (map[row.game_id] === undefined || row.sell_price < map[row.game_id]) {
-      map[row.game_id] = row.sell_price;
+
+  for (let offset = 0; ; offset += PAGE) {
+    const { data, error } = await supabaseAdmin()
+      .from('products')
+      .select('game_id, sell_price')
+      .eq('is_active', true)
+      .eq('provider_status', 'ACTIVE')
+      .gt('sell_price', 0)
+      .range(offset, offset + PAGE - 1);
+
+    if (error || !data) break;
+    for (const row of data as { game_id: string | null; sell_price: number }[]) {
+      if (!row.game_id) continue;
+      if (map[row.game_id] === undefined || row.sell_price < map[row.game_id]) {
+        map[row.game_id] = row.sell_price;
+      }
     }
+    if (data.length < PAGE) break;
   }
   return map;
 }

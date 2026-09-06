@@ -1,4 +1,5 @@
 import { slugify } from './utils';
+import { getCategory, type CategoryKey } from './categories';
 
 /**
  * Preset metadata game.
@@ -32,11 +33,11 @@ export type GamePreset = {
 };
 
 const DEFAULT_HOW_TO = (idLabel: string) => [
-  `Masukkan ${idLabel} akun kamu dengan benar.`,
+  `Masukkan ${idLabel} dengan benar dan periksa ulang sebelum lanjut.`,
   'Pilih nominal yang ingin dibeli.',
   'Pilih metode pembayaran (QRIS, e-wallet, atau transfer bank).',
   'Isi nomor WhatsApp aktif untuk menerima bukti transaksi.',
-  'Selesaikan pembayaran, item masuk otomatis dalam hitungan detik.',
+  'Selesaikan pembayaran, pesanan diproses otomatis dalam hitungan detik.',
 ];
 
 export const GAME_PRESETS: GamePreset[] = [
@@ -399,25 +400,102 @@ export function findPreset(operator: string): GamePreset | null {
   return null;
 }
 
+
 /**
- * Membentuk baris tabel `games` dari nilai operator katalog.
- * Game tanpa preset dibuat nonaktif supaya kamu yang memilih untuk menjualnya.
+ * Merapikan nama operator katalog untuk kategori non-game.
+ *
+ * Katalog menuliskan brand yang sama dengan banyak awalan: "Pulsa Telkomsel",
+ * "DATA TELKOMSEL", "VOUCHER TELKOMSEL", "Injek V.Telkomsel". Awalan itu
+ * dibuang agar kartu etalase cukup menampilkan "Telkomsel", sementara slug
+ * tetap diberi awalan kategori supaya Telkomsel di halaman Pulsa dan di
+ * halaman Paket Data tidak saling menimpa.
  */
-export function buildGameRow(operator: string, needsServerId: boolean) {
-  const preset = findPreset(operator);
-  const idLabel = preset?.idLabel ?? 'User ID';
+const BRAND_PREFIXES = [
+  'injek v.', 'injek v', 'voucher', 'pulsa', 'paket data', 'data', 'token',
+  'saldo', 'tagihan', 'act', 'transfer',
+];
+
+function cleanBrandName(operator: string): string {
+  let name = operator.trim();
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const prefix of BRAND_PREFIXES) {
+      const lower = name.toLowerCase();
+      if (lower.startsWith(prefix + ' ') || lower.startsWith(prefix + '.')) {
+        name = name.slice(prefix.length + 1).trim();
+        changed = true;
+      }
+    }
+  }
+  if (!name) name = operator.trim();
+
+  // "TELKOMSEL" -> "Telkomsel", tapi akronim pendek seperti PLN dibiarkan.
+  return name
+    .split(/\s+/)
+    .map((word) =>
+      word.length > 3 && word === word.toUpperCase()
+        ? word[0] + word.slice(1).toLowerCase()
+        : word,
+    )
+    .join(' ');
+}
+
+/** Awalan slug per kategori agar brand yang sama di dua kategori tidak bentrok. */
+const SLUG_PREFIX: Partial<Record<CategoryKey, string>> = {
+  pulsa: 'pulsa',
+  data: 'paket-data',
+  pln: 'token-listrik',
+  ewallet: 'e-wallet',
+  tagihan: 'tagihan',
+  etoll: 'e-toll',
+};
+
+/** Kalimat pembuka per kategori, dipakai bila brand tidak punya preset. */
+const CATEGORY_BLURB: Record<CategoryKey, (brand: string) => string> = {
+  pulsa: (b) => `Isi pulsa ${b} otomatis, masuk dalam hitungan detik.`,
+  data: (b) => `Beli paket data ${b} tanpa kode dial, langsung aktif.`,
+  pln: (b) => `Beli token listrik ${b} prabayar, nomor token dikirim otomatis.`,
+  ewallet: (b) => `Top up saldo ${b} langsung ke nomor terdaftar.`,
+  game: (b) => `Top up ${b} dengan harga distributor, tanpa perlu login akun.`,
+  voucher: (b) => `Beli voucher ${b}, kode dikirim otomatis setelah pembayaran.`,
+  tagihan: (b) => `Bayar tagihan ${b} kapan saja tanpa antre.`,
+  hiburan: (b) => `Beli langganan ${b} dengan harga bersaing.`,
+  etoll: (b) => `Top up saldo ${b} untuk perjalanan tanpa antre.`,
+  lainnya: (b) => `Beli produk ${b} dengan proses otomatis.`,
+};
+
+/**
+ * Membentuk baris tabel `games` (etalase brand) dari nilai operator katalog.
+ *
+ * Preset dipakai lebih dulu; brand tanpa preset — dan itu mayoritas, karena
+ * katalog punya ratusan operator — memakai label bawaan kategorinya. Semua
+ * baris baru dibuat nonaktif supaya kamu yang memilih untuk menjualnya.
+ */
+export function buildGameRow(
+  operator: string,
+  needsServerId: boolean,
+  categoryKey: CategoryKey = 'game',
+) {
+  const category = getCategory(categoryKey);
+  const preset = categoryKey === 'game' || categoryKey === 'voucher' ? findPreset(operator) : null;
+  const idLabel = preset?.idLabel ?? category.targetLabel;
+
+  const brandName = preset?.name ?? (categoryKey === 'game' ? operator : cleanBrandName(operator));
+  const prefix = SLUG_PREFIX[categoryKey];
+  const slug =
+    preset?.slug ?? (prefix ? `${prefix}-${slugify(brandName)}` : slugify(brandName));
 
   return {
-    slug: preset?.slug ?? slugify(operator),
-    name: preset?.name ?? operator,
+    slug,
+    name: brandName,
     publisher: preset?.publisher ?? null,
     nexshop_game_code: preset?.nexshopGameCode ?? null,
     provider_operator: operator,
     short_description:
-      preset?.shortDescription ??
-      `Top up ${operator} murah, proses otomatis, dan aman tanpa perlu login akun.`,
+      preset?.shortDescription ?? CATEGORY_BLURB[categoryKey](brandName),
     id_label: idLabel,
-    id_placeholder: preset?.idPlaceholder ?? `Masukkan ${idLabel}`,
+    id_placeholder: preset?.idPlaceholder ?? category.targetPlaceholder,
     server_label: preset?.serverLabel ?? 'Server / Zone ID',
     server_placeholder: preset?.serverPlaceholder ?? 'Masukkan Zone ID',
     needs_server_id: preset?.needsServerId ?? needsServerId,

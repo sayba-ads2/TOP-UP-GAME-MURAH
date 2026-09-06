@@ -4,14 +4,14 @@ import type { Faq, Game, PublicProduct } from '@/types';
 /**
  * Structured data (schema.org JSON-LD).
  *
- * Google memakai ini untuk rich result: rating bintang, breadcrumb, FAQ
- * accordion di SERP, dan panel bisnis lokal untuk pencarian "top up game
- * terdekat" di area Pontianak.
+ * Google memakai ini untuk rich result: rating bintang, breadcrumb, dan FAQ
+ * accordion di halaman hasil pencarian. Toko diperlakukan sebagai toko daring
+ * berskala nasional — bukan bisnis lokal — karena seluruh layanannya online.
  */
 
 const ORG_ID = `${site.url}/#organization`;
 const WEBSITE_ID = `${site.url}/#website`;
-const LOCAL_ID = `${site.url}/#localbusiness`;
+const STORE_ID = `${site.url}/#store`;
 
 export function organizationJsonLd() {
   return {
@@ -29,20 +29,18 @@ export function organizationJsonLd() {
     sameAs: Object.values(site.social).filter(Boolean),
     address: {
       '@type': 'PostalAddress',
-      streetAddress: site.address.street,
       addressLocality: site.address.city,
       addressRegion: site.address.region,
-      postalCode: site.address.postalCode,
       addressCountry: site.address.country,
     },
   };
 }
 
-export function localBusinessJsonLd() {
+export function onlineStoreJsonLd() {
   return {
     '@context': 'https://schema.org',
-    '@type': 'OnlineBusiness',
-    '@id': LOCAL_ID,
+    '@type': 'OnlineStore',
+    '@id': STORE_ID,
     name: site.name,
     image: site.ogImage,
     url: site.url,
@@ -51,20 +49,8 @@ export function localBusinessJsonLd() {
     priceRange: 'Rp1.000 - Rp5.000.000',
     currenciesAccepted: 'IDR',
     paymentAccepted: 'QRIS, DANA, GoPay, OVO, ShopeePay, Transfer Bank',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: site.address.street,
-      addressLocality: site.address.city,
-      addressRegion: site.address.region,
-      postalCode: site.address.postalCode,
-      addressCountry: site.address.country,
-    },
-    geo: {
-      '@type': 'GeoCoordinates',
-      latitude: site.address.latitude,
-      longitude: site.address.longitude,
-    },
-    areaServed: site.serviceAreas.map((name) => ({ '@type': 'City', name })),
+    areaServed: { '@type': 'Country', name: 'Indonesia' },
+    parentOrganization: { '@id': ORG_ID },
     openingHoursSpecification: [
       {
         '@type': 'OpeningHoursSpecification',
@@ -126,8 +112,8 @@ export function faqJsonLd(faqs: Faq[]) {
   };
 }
 
-/** Halaman game diperlakukan sebagai Product dengan rentang harga (offers). */
-export function gameProductJsonLd(game: Game, products: PublicProduct[]) {
+/** Halaman brand diperlakukan sebagai Product dengan rentang harga (offers). */
+export function brandProductJsonLd(game: Game, products: PublicProduct[]) {
   const prices = products.map((p) => p.sell_price).filter((p) => p > 0);
   const low = prices.length ? Math.min(...prices) : 0;
   const high = prices.length ? Math.max(...prices) : 0;
@@ -135,14 +121,12 @@ export function gameProductJsonLd(game: Game, products: PublicProduct[]) {
   return {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: `Top Up ${game.name}`,
+    name: game.name,
     description:
-      game.seo_description ??
-      game.short_description ??
-      `Top up ${game.name} murah, cepat, dan legal di ${site.address.city}.`,
+      game.seo_description ?? game.short_description ?? `${game.name} — proses otomatis 24 jam.`,
     image: game.icon_url ?? site.ogImage,
     brand: { '@type': 'Brand', name: game.publisher ?? game.name },
-    category: 'Voucher Game Digital',
+    category: 'Produk Digital',
     url: canonical(`/${game.slug}`),
     offers: {
       '@type': 'AggregateOffer',
@@ -152,13 +136,6 @@ export function gameProductJsonLd(game: Game, products: PublicProduct[]) {
       offerCount: products.length,
       availability: 'https://schema.org/InStock',
       seller: { '@id': ORG_ID },
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.9',
-      reviewCount: '128',
-      bestRating: '5',
-      worstRating: '1',
     },
   };
 }

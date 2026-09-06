@@ -10,8 +10,11 @@ export type FulfillmentStatus =
 
 export type ServerOption = { value: string; label: string };
 
-/** Bagian etalase tempat sebuah entri tampil. */
-export type GameKind = 'game' | 'voucher';
+/**
+ * Kategori etalase tempat sebuah brand tampil.
+ * Definisi lengkapnya (label, slug, label input) ada di src/lib/categories.ts.
+ */
+export type { CategoryKey as GameKind } from '@/lib/categories';
 
 export type Game = {
   id: string;
@@ -20,7 +23,7 @@ export type Game = {
   publisher: string | null;
   nexshop_game_code: string | null;
   provider_operator: string | null;
-  kind: GameKind;
+  kind: import('@/lib/categories').CategoryKey;
   icon_url: string | null;
   banner_url: string | null;
   short_description: string | null;

@@ -1,8 +1,41 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { Gamepad2, Ticket } from 'lucide-react';
+import { Gamepad2, Lightbulb, Receipt, Signal, Ticket, Tv, Wallet, Wifi } from 'lucide-react';
+import type { GameKind } from '@/types';
 import { cn, formatRupiah } from '@/lib/utils';
 import type { Game } from '@/types';
+
+const PLACEHOLDER_ICON: Partial<Record<GameKind, typeof Ticket>> = {
+  pulsa: Signal,
+  data: Wifi,
+  pln: Lightbulb,
+  ewallet: Wallet,
+  game: Gamepad2,
+  voucher: Ticket,
+  tagihan: Receipt,
+  hiburan: Tv,
+};
+
+const ACTION_LABEL: Partial<Record<GameKind, string>> = {
+  pulsa: 'Isi pulsa',
+  data: 'Beli paket data',
+  pln: 'Beli token',
+  ewallet: 'Top up saldo',
+  game: 'Top up',
+  voucher: 'Beli voucher',
+  tagihan: 'Bayar tagihan',
+};
+
+const KIND_LABEL: Partial<Record<GameKind, string>> = {
+  pulsa: 'Pulsa',
+  data: 'Paket data',
+  pln: 'Token listrik',
+  ewallet: 'Saldo e-wallet',
+  game: 'Top up game',
+  voucher: 'Voucher digital',
+  tagihan: 'Tagihan',
+  hiburan: 'Hiburan',
+};
 
 /**
  * Kartu etalase.
@@ -19,8 +52,8 @@ export function GameCard({
   cheapest?: number;
   variant?: 'grid' | 'rail';
 }) {
-  const Placeholder = game.kind === 'voucher' ? Ticket : Gamepad2;
-  const label = game.kind === 'voucher' ? 'Beli voucher' : 'Top up';
+  const Placeholder = PLACEHOLDER_ICON[game.kind] ?? Ticket;
+  const label = ACTION_LABEL[game.kind] ?? 'Beli';
 
   return (
     <Link
@@ -52,7 +85,7 @@ export function GameCard({
           {game.name}
         </h3>
         <p className="mt-0.5 truncate text-[11px] text-fg-faint">
-          {game.publisher ?? (game.kind === 'voucher' ? 'Voucher digital' : 'Top up game')}
+          {game.publisher ?? KIND_LABEL[game.kind] ?? 'Produk digital'}
         </p>
         {cheapest ? (
           <p className="mt-2 text-[11px] text-fg-muted">

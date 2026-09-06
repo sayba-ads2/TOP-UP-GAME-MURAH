@@ -60,6 +60,6 @@ export const config = {
      * Jalankan pada semua rute kecuali aset statis, gambar hasil optimasi,
      * dan webhook (webhook harus bebas dari pemeriksaan sesi).
      */
-    '/((?!_next/static|_next/image|favicon.ico|icon.svg|api/webhook|api/cron|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|api/webhook|api/cron|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico)$).*)',
   ],
 };
